@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<!--
+==============================================================================
+           "GitHub HTML5 Pandoc Template" v2.1 — by Tristano Ajmone           
+==============================================================================
+Copyright © Tristano Ajmone, 2017, MIT License (MIT). Project's home:
+
+- https://github.com/tajmone/pandoc-goodies
+
+The CSS in this template reuses source code taken from the following projects:
+
+- GitHub Markdown CSS: Copyright © Sindre Sorhus, MIT License (MIT):
+  https://github.com/sindresorhus/github-markdown-css
+
+- Primer CSS: Copyright © 2016-2017 GitHub Inc., MIT License (MIT):
+  http://primercss.io/
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+The MIT License 
+
+Copyright (c) Tristano Ajmone, 2017 (github.com/tajmone/pandoc-goodies)
+Copyright (c) Sindre Sorhus <sindresorhus@gmail.com> (sindresorhus.com)
+Copyright (c) 2017 GitHub Inc.
+
+"GitHub Pandoc HTML5 Template" is Copyright (c) Tristano Ajmone, 2017, released
+under the MIT License (MIT); it contains readaptations of substantial portions
+of the following third party softwares:
+
+(1) "GitHub Markdown CSS", Copyright (c) Sindre Sorhus, MIT License (MIT).
+(2) "Primer CSS", Copyright (c) 2016 GitHub Inc., MIT License (MIT).
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+==============================================================================-->
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>CS5001_P3_Vector_Drawing</title>
+  <style type="text/css">
+@charset "UTF-8";
+.markdown-body{
+    -ms-text-size-adjust:100%;
+    -webkit-text-size-adjust:100%;
+    color:#24292e;
+    font-family:-apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";
+    font-size:16px;
+    line-height:1.5;
+    word-wrap:break-word;
+    box-sizing:border-box;
+    min-width:200px;
+    max-width:980px;
+    margin:0 auto;
+    padding:45px
+}
+.markdown-body a{
+    color:#0366d6;
+    background-color:transparent;
+    text-decoration:none;
+    -webkit-text-decoration-skip:objects
+}
+.markdown-body a:active,.markdown-body a:hover{
+    outline-width:0
+}
+.markdown-body a:hover{
+    text-decoration:underline
+}
+.markdown-body a:not([href]){
+    color:inherit;
+    text-decoration:none
+}
+.markdown-body strong{
+    font-weight:600
+}
+.markdown-body h1,.markdown-body h2,.markdown-body h3,.markdown-body h4,.markdown-body h5,.markdown-body h6{
+    margin-top:24px;
+    margin-bottom:16px;
+    font-weight:600;
+    line-height:1.25
+}
+.markdown-body h1{
+    font-size:2em;
+    margin:.67em 0;
+    padding-bottom:.3em;
+    border-bottom:1px solid #eaecef
+}
+.markdown-body h2{
+    padding-bottom:.3em;
+    font-size:1.5em;
+    border-bottom:1px solid #eaecef
+}
+.markdown-body h3{
+    font-size:1.25em
+}
+.markdown-body h4{
+    font-size:1em
+}
+.markdown-body h5{
+    font-size:.875em
+}
+.markdown-body h6{
+    font-size:.85em;
+    color:#6a737d
+}
+.markdown-body img{
+    border-style:none
+}
+.markdown-body svg:not(:root){
+    overflow:hidden
+}
+.markdown-body hr{
+    box-sizing:content-box;
+    height:.25em;
+    margin:24px 0;
+    padding:0;
+    overflow:hidden;
+    background-color:#e1e4e8;
+    border:0
+}
+.markdown-body hr::before{
+    display:table;
+    content:""
+}
+.markdown-body hr::after{
+    display:table;
+    clear:both;
+    content:""
+}
+.markdown-body input{
+    margin:0;
+    overflow:visible;
+    font:inherit;
+    font-family:inherit;
+    font-size:inherit;
+    line-height:inherit
+}
+.markdown-body [type=checkbox]{
+    box-sizing:border-box;
+    padding:0
+}
+.markdown-body *{
+    box-sizing:border-box
+}
+.markdown-body blockquote{
+    margin:0
+}
+.markdown-body ol,.markdown-body ul{
+    padding-left:2em
+}
+.markdown-body ol ol,.markdown-body ul ol{
+    list-style-type:lower-alpha
+}
+.markdown-body ol ol,.markdown-body ol ul,.markdown-body ul ol,.markdown-body ul ul{
+    margin-top:0;
+    margin-bottom:0
+}
+.markdown-body ol ol ol,.markdown-body ol ul ol,.markdown-body ul ol ol,.markdown-body ul ul ol{
+    list-style-type:lower-alpha
+}
+.markdown-body li>p{
+    margin-top:16px
+}
+.markdown-body li+li{
+    margin-top:.25em
+}
+.markdown-body dd{
+    margin-left:0
+}
+.markdown-body dl{
+    padding:0
+}
+.markdown-body dl dt{
+    padding:0;
+    margin-top:16px;
+    font-size:1em;
+    font-style:italic;
+    font-weight:600
+}
+.markdown-body dl dd{
+    padding:0 16px;
+    margin-bottom:16px
+}
+.markdown-body code{
+    font-family:SFMono-Regular,Consolas,"Liberation Mono",Menlo,Courier,monospace
+}
+.markdown-body pre{
+    font:12px SFMono-Regular,Consolas,"Liberation Mono",Menlo,Courier,monospace;
+    word-wrap:normal
+}
+.markdown-body blockquote,.markdown-body dl,.markdown-body ol,.markdown-body p,.markdown-body pre,.markdown-body table,.markdown-body ul{
+    margin-top:0;
+    margin-bottom:16px
+}
+.markdown-body blockquote{
+    padding:0 1em;
+    color:#d45555;
+    border-left:.25em solid #d45555
+}
+.markdown-body blockquote>:first-child{
+    margin-top:0
+}
+.markdown-body blockquote>:last-child{
+    margin-bottom:0
+}
+.markdown-body table{
+    display:block;
+    width:100%;
+    overflow:auto;
+    border-spacing:0;
+    border-collapse:collapse
+}
+.markdown-body table th{
+    font-weight:600
+}
+.markdown-body table td,.markdown-body table th{
+    padding:6px 13px;
+    border:1px solid #dfe2e5
+}
+.markdown-body table tr{
+    background-color:#fff;
+    border-top:1px solid #c6cbd1
+}
+.markdown-body table tr:nth-child(2n){
+    background-color:#f6f8fa
+}
+.markdown-body img{
+    max-width:100%;
+    box-sizing:content-box;
+    background-color:#fff
+}
+.markdown-body code{
+    padding:.2em 0;
+    margin:0;
+    font-size:85%;
+    background-color:rgba(27,31,35,.05);
+    border-radius:3px
+}
+.markdown-body code::after,.markdown-body code::before{
+    letter-spacing:-.2em;
+    content:" "
+}
+.markdown-body pre>code{
+    padding:0;
+    margin:0;
+    font-size:100%;
+    word-break:normal;
+    white-space:pre;
+    background:0 0;
+    border:0
+}
+.markdown-body .highlight{
+    margin-bottom:16px
+}
+.markdown-body .highlight pre{
+    margin-bottom:0;
+    word-break:normal
+}
+.markdown-body .highlight pre,.markdown-body pre{
+    padding:16px;
+    overflow:auto;
+    font-size:85%;
+    line-height:1.45;
+    background-color:#f6f8fa;
+    border-radius:3px
+}
+.markdown-body pre code{
+    display:inline;
+    max-width:auto;
+    padding:0;
+    margin:0;
+    overflow:visible;
+    line-height:inherit;
+    word-wrap:normal;
+    background-color:transparent;
+    border:0
+}
+.markdown-body pre code::after,.markdown-body pre code::before{
+    content:normal
+}
+.markdown-body .full-commit .btn-outline:not(:disabled):hover{
+    color:#005cc5;
+    border-color:#005cc5
+}
+.markdown-body kbd{
+    box-shadow:inset 0 -1px 0 #959da5;
+    display:inline-block;
+    padding:3px 5px;
+    font:11px/10px SFMono-Regular,Consolas,"Liberation Mono",Menlo,Courier,monospace;
+    color:#444d56;
+    vertical-align:middle;
+    background-color:#fcfcfc;
+    border:1px solid #c6cbd1;
+    border-bottom-color:#959da5;
+    border-radius:3px;
+    box-shadow:inset 0 -1px 0 #959da5
+}
+.markdown-body :checked+.radio-label{
+    position:relative;
+    z-index:1;
+    border-color:#0366d6
+}
+.markdown-body .task-list-item{
+    list-style-type:none
+}
+.markdown-body .task-list-item+.task-list-item{
+    margin-top:3px
+}
+.markdown-body .task-list-item input{
+    margin:0 .2em .25em -1.6em;
+    vertical-align:middle
+}
+.markdown-body::before{
+    display:table;
+    content:""
+}
+.markdown-body::after{
+    display:table;
+    clear:both;
+    content:""
+}
+.markdown-body>:first-child{
+    margin-top:0!important
+}
+.markdown-body>:last-child{
+    margin-bottom:0!important
+}
+.Alert,.Error,.Note,.Success,.Warning{
+    padding:11px;
+    margin-bottom:24px;
+    border-style:solid;
+    border-width:1px;
+    border-radius:4px
+}
+.Alert p,.Error p,.Note p,.Success p,.Warning p{
+    margin-top:0
+}
+.Alert p:last-child,.Error p:last-child,.Note p:last-child,.Success p:last-child,.Warning p:last-child{
+    margin-bottom:0
+}
+.Alert{
+    color:#246;
+    background-color:#e2eef9;
+    border-color:#bac6d3
+}
+.Warning{
+    color:#4c4a42;
+    background-color:#fff9ea;
+    border-color:#dfd8c2
+}
+.Error{
+    color:#911;
+    background-color:#fcdede;
+    border-color:#d2b2b2
+}
+.Success{
+    color:#22662c;
+    background-color:#e2f9e5;
+    border-color:#bad3be
+}
+.Note{
+    color:#2f363d;
+    background-color:#f6f8fa;
+    border-color:#d5d8da
+}
+.Alert h1,.Alert h2,.Alert h3,.Alert h4,.Alert h5,.Alert h6{
+    color:#246;
+    margin-bottom:0
+}
+.Warning h1,.Warning h2,.Warning h3,.Warning h4,.Warning h5,.Warning h6{
+    color:#4c4a42;
+    margin-bottom:0
+}
+.Error h1,.Error h2,.Error h3,.Error h4,.Error h5,.Error h6{
+    color:#911;
+    margin-bottom:0
+}
+.Success h1,.Success h2,.Success h3,.Success h4,.Success h5,.Success h6{
+    color:#22662c;
+    margin-bottom:0
+}
+.Note h1,.Note h2,.Note h3,.Note h4,.Note h5,.Note h6{
+    color:#2f363d;
+    margin-bottom:0
+}
+.Alert h1:first-child,.Alert h2:first-child,.Alert h3:first-child,.Alert h4:first-child,.Alert h5:first-child,.Alert h6:first-child,.Error h1:first-child,.Error h2:first-child,.Error h3:first-child,.Error h4:first-child,.Error h5:first-child,.Error h6:first-child,.Note h1:first-child,.Note h2:first-child,.Note h3:first-child,.Note h4:first-child,.Note h5:first-child,.Note h6:first-child,.Success h1:first-child,.Success h2:first-child,.Success h3:first-child,.Success h4:first-child,.Success h5:first-child,.Success h6:first-child,.Warning h1:first-child,.Warning h2:first-child,.Warning h3:first-child,.Warning h4:first-child,.Warning h5:first-child,.Warning h6:first-child{
+    margin-top:0
+}
+h1.title,p.subtitle{
+    text-align:center
+}
+h1.title.followed-by-subtitle{
+    margin-bottom:0
+}
+p.subtitle{
+    font-size:1.5em;
+    font-weight:600;
+    line-height:1.25;
+    margin-top:0;
+    margin-bottom:16px;
+    padding-bottom:.3em
+}
+div.line-block{
+    white-space:pre-line
+}
+  </style>
+  <style type="text/css">
+    code{
+      white-space: pre
+    }
+    figure{
+      text-align:center
+    }
+  </style>
+  <style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<article class="markdown-body">
+<header>
+<h1 class="title"><div class="line-block">CS5001 Object-Oriented Modelling, Design and Programming<br />
+Practical 3 – Vector Drawing</div></h1>
+<p class="author"><div class="line-block">School of Computer Science<br />
+University of St Andrews</div></p>
+<p class="date"><div class="line-block">Due Friday week 11, weighting 45%<br />
+MMS is the definitive source for deadlines and weightings.</div></p>
+</header>
+<p>In this practical you are required to write a simple vector graphics drawing program using Java Swing. Your program should use either the Model–View–Controller (MVC) or the Model–Delegate (MD) design pattern. You should use JUnit to test your Model, and you should include these tests in your submission.</p>
+<p>You may not use any third-party libraries in your code, except for the javax.json library for JSON parsing and generation and JUnit libraries for testing.</p>
+<p>At a minimum, your program should support the following feature requirements:</p>
+<h1 id="requirements">Requirements</h1>
+<ul>
+<li>Drawing straight lines</li>
+<li>Drawing rectangles</li>
+<li>Drawing ellipses</li>
+<li>Drawing triangles</li>
+<li>Undo/redo</li>
+<li>Different border/line color, border/line width, or fill colors (if applicable) for each shape</li>
+<li>Rotation of the shapes</li>
+<li>Support for drawing squares and circles. One way of implementing this feature would be using a key (say the Shift key) to lock aspect ratio during the drawing of rectangles and ellipses.</li>
+<li>Exporting the drawing as a jpeg or png file</li>
+<li>Select a previously drawn object and change its location, color or size</li>
+<li>Use networking to sharing drawings with other users using the protocol specified below</li>
+</ul>
+<h1 id="implementation">Implementation</h1>
+<p>For this practical you will have to think very carefully about the classes you will require for your program. You should design a suitable set of classes to represent the shapes which can be created with a specified color, fill, etc. and whose dimensions may be defined by a start and end position. Consider that you will probably want to be able to deal with a collection of abstract shapes in your program code in a polymorphic manner rather than dealing with different collections for each shape. You should think carefully about where to place the code which specifies how to draw each shape in the GUI.</p>
+<p>Whether you choose MD or MVC, you should aim to provide a Model component of your program comprising classes that model the shapes that have been drawn. The Model should provide operations to select the current drawing shape, create and manipulate these shapes. The model should also provide methods to undo and redo various operations (including shape creation) as well as methods to save or load a shape collection from file, etc. depending on how many features you implement. The classes comprising the Delegate or View/Controller should translate button presses to the appropriate calls to methods defined in the Model. You should use an appropriate notification structure such as PropertyChangeListener, so that the drawing canvas is redrawn when the model has changed.</p>
+<p>See the figure below for an example of what your GUI might look like.</p>
+<figure>
+<img src="data:image/png;base64,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OW9lVzpnzM/2e52Yfx5iHYa833QekBedfF++8fUP50s335PlXVtlmz2PyWvPeFn27kiSoX4+QmP6ezlJrSt3XPC+vPyCUtqmzssex70173jFXnWuY4N+F/XWvkdOfcvf565PXZAr/+OVubQ6Bgf41/tYmLJPXnTSvvnBp2/I+tkH5rD96/gM7MG290hfkww6jnoej417LTT8x2g997mx/73cqjO3pXPOOad20kknJUlmzpyZJJudY9vf16tWrdpsIT3X6+u/P39+nveCk+oezCU/umhjSLPJ+eefn0WLFmVxafHG703/yYFZfdy1DRzVyG0x9s+me/0WL86iRYs2u68VxcZ9VNB1KPr4k+KsQ1HGOdZqK3+Sf33Zx/K76cfnrG++PQePwSuLybotR2o89sFItcK+c58e2oSvz3D/LvIYabX91nXDp/Oad16Qx47+13z1vUdlxoAXHN/tXfc4MnG/31phX/eswz333NPooYy5iy66qP83LoaawR2OS3500ehGCUDxdP0uX/nkfXnKS5+Tvec+nhvO/1FuKLdlweFHDP4Js4wd+2Bs2Z60vFq6ll+XL3764tzftkNOPuGgQYOyoePweGQAmx2WPNSnJPd8Xe80tllYgEmqc/8864Dr8pkzX5M//vXxdM7fJU8//T159SsPycymOjmvhdkHY8v2pNWtvSL/8aqP5Jqtdsuxb/3/8pqn9f+xo00xDo/HUWvVw5JHdM7totOf36Dh0tv0nxzY6CEADGBadnrW63LWs17X6IFMYvbB2LI9m17nUXn/j37W6FEU17Rn58wfPbv+y4/X9q5rHB6PozUp4jap7+/crly5sgFDpbeinm8LAAA0VqvGbb8fltszQzvQ1wAAANBMxvWcWwAAAJpLq/bciM65fc0pz23QcCevxYsXJ59t9CjG3+LFi4e+UJMr+joUffxJcdahKOMsAtuyuOy7/rXadmm19RnIZFlPir+vWzVuS+ecc07thBNOGNVC5s6dO0bDoT/nzzs/i2qLGj2McbdixYrC35eKvg5FH39SnHUoyjiLwLYsLvuuf622XVptfQYyWdaT1tjXd9xxR6OHMOYuvvji7rg9/vjjGz0WAAAAGJEf//jH3Yclz5s3r9FjAQAAgBHrSFpzWhoAAIDJoyNJDjzwwEaPAwAAAEbk6quv7v/v3AIAAECRiFsAAAAKT9wC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" style="width:30em" alt /><figcaption>Example GUI layout, showing several shapes and colors. Please don’t take this design as a requirement, feel free to be more creative! (Note you are no longer required to draw some of the shapes in the screenshot)</figcaption>
+</figure>
+<h1 id="network-procotol">Network Procotol</h1>
+<p>You need to use the following protocol to communicate with the server.</p>
+<p>Connect to the server at cs5001-p3.dynv6.net on port 8080. The communication protocol will be as follows. Remember that the communication is unencrypted, so you should not send any sensitive information.</p>
+<p>The following operations are supported:</p>
+<p>Each command should be sent on one line. The server will reply with one line. Make sure you do not close the connection, otherwise you will need to login again.</p>
+<ul>
+<li><code>login</code>: The client sends a JSON object to the server. The JSON object has the following format:</li>
+</ul>
+<div class="sourceCode" id="cb1"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true"></a><span class="fu">{</span><span class="dt">&quot;action&quot;</span><span class="fu">:</span> <span class="st">&quot;login&quot;</span><span class="fu">,</span> <span class="dt">&quot;data&quot;</span> <span class="fu">:{</span><span class="dt">&quot;token&quot;</span><span class="fu">:</span> <span class="st">&quot;token data&quot;</span><span class="fu">}}</span></span></code></pre></div>
+<p>The server will reply with ok or error:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true"></a><span class="fu">{</span><span class="dt">&quot;result&quot;</span><span class="fu">:</span> <span class="st">&quot;ok&quot;</span><span class="fu">}</span></span></code></pre></div>
+<p>or</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true"></a><span class="fu">{</span><span class="dt">&quot;result&quot;</span><span class="fu">:</span> <span class="st">&quot;error&quot;</span><span class="fu">,</span> <span class="dt">&quot;message&quot;</span><span class="fu">:</span> <span class="st">&quot;error message&quot;</span><span class="fu">}</span></span></code></pre></div>
+<ul>
+<li><code>getDrawings</code>: The client sends a JSON object to the server. The JSON object has the following format:</li>
+</ul>
+<div class="sourceCode" id="cb4"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true"></a><span class="fu">{</span><span class="dt">&quot;action&quot;</span><span class="fu">:</span> <span class="st">&quot;getDrawings&quot;</span><span class="fu">}</span></span></code></pre></div>
+<p>The server will reply with a JSON object with the following format:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true"></a><span class="ot">[</span><span class="fu">{</span><span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="st">&quot;0aed29ae-1099-4d95-813f-bd88ad456a45&quot;</span><span class="fu">,</span> <span class="dt">&quot;created&quot;</span><span class="fu">:</span> <span class="st">&quot;timeString&quot;</span><span class="fu">,</span> <span class="dt">&quot;modified&quot;</span><span class="fu">:</span> <span class="st">&quot;timeString&quot;</span><span class="fu">,</span> <span class="dt">&quot;isOwner&quot;</span><span class="fu">:</span> <span class="kw">true</span><span class="fu">,</span> <span class="dt">&quot;type&quot;</span><span class="fu">:</span> <span class="st">&quot;rectangle&quot;</span><span class="fu">,</span> <span class="dt">&quot;x&quot;</span><span class="fu">:</span> <span class="dv">10</span><span class="fu">,</span> <span class="dt">&quot;y&quot;</span><span class="fu">:</span> <span class="dv">10</span><span class="fu">,</span> <span class="dt">&quot;properties&quot;</span><span class="fu">:</span> <span class="fu">{</span><span class="dt">&quot;width&quot;</span><span class="fu">:</span> <span class="dv">10</span><span class="fu">,</span> <span class="dt">&quot;height&quot;</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true"></a><span class="fu">:</span> <span class="dv">10</span><span class="fu">,</span> <span class="dt">&quot;lineColor&quot;</span><span class="fu">:</span> <span class="st">&quot;red&quot;</span><span class="fu">,</span> <span class="er">...</span><span class="fu">}}</span><span class="ot">,</span> <span class="fu">{</span> <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="dv">2</span><span class="fu">,</span> <span class="er">...</span><span class="fu">}</span><span class="ot">]</span></span></code></pre></div>
+<ul>
+<li><code>addDrawing</code>: The client sends a JSON object to the server. The JSON object has the following format:</li>
+</ul>
+<div class="sourceCode" id="cb6"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true"></a><span class="fu">{</span><span class="dt">&quot;action&quot;</span><span class="fu">:</span> <span class="st">&quot;addDrawing&quot;</span><span class="fu">,</span> <span class="dt">&quot;data&quot;</span><span class="fu">:</span> <span class="fu">{</span><span class="dt">&quot;type&quot;</span><span class="fu">:</span> <span class="st">&quot;rectangle&quot;</span><span class="fu">,</span> <span class="dt">&quot;x&quot;</span><span class="fu">:</span> <span class="dv">10</span><span class="fu">,</span> <span class="dt">&quot;y&quot;</span><span class="fu">:</span> <span class="dv">10</span><span class="fu">,</span> <span class="dt">&quot;properties&quot;</span><span class="fu">:</span> <span class="fu">{</span><span class="dt">&quot;width&quot;</span><span class="fu">:</span> <span class="dv">10</span><span class="fu">,</span> <span class="dt">&quot;height&quot;</span><span class="fu">:</span> <span class="dv">10</span><span class="fu">,</span> <span class="dt">&quot;lineColor&quot;</span><span class="fu">:</span> <span class="st">&quot;red&quot;</span><span class="fu">,</span> <span class="er">...</span><span class="fu">}}}</span></span></code></pre></div>
+<p>The server will reply with ok or error:</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true"></a><span class="fu">{</span> <span class="dt">&quot;result&quot;</span><span class="fu">:</span> <span class="st">&quot;ok&quot;</span><span class="fu">,</span> <span class="dt">&quot;data&quot;</span><span class="fu">:</span> <span class="fu">{</span><span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="st">&quot;0aed29ae-1099-4d95-813f-bd88ad456a45&quot;</span><span class="fu">}}</span></span></code></pre></div>
+<p>or</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true"></a><span class="fu">{</span> <span class="dt">&quot;result&quot;</span><span class="fu">:</span> <span class="st">&quot;error&quot;</span><span class="fu">,</span> <span class="dt">&quot;message&quot;</span><span class="fu">:</span> <span class="st">&quot;error message&quot;</span> <span class="fu">}</span></span></code></pre></div>
+<ul>
+<li><code>updateDrawing</code>: The client sends a JSON object to the server. The server will update the shape with the specified id using the properties specified. Any non-specified properties will remain unchanged. The JSON object has the following format:</li>
+</ul>
+<div class="sourceCode" id="cb9"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true"></a><span class="fu">{</span><span class="dt">&quot;action&quot;</span><span class="fu">:</span> <span class="st">&quot;updateDrawing&quot;</span><span class="fu">,</span> <span class="dt">&quot;data&quot;</span><span class="fu">:</span> <span class="fu">{</span><span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="st">&quot;0aed29ae-1099-4d95-813f-bd88ad456a45&quot;</span><span class="fu">,</span> <span class="dt">&quot;x&quot;</span><span class="fu">:</span> <span class="dv">10</span><span class="fu">,</span> <span class="dt">&quot;properties&quot;</span><span class="fu">:</span> <span class="fu">{</span><span class="dt">&quot;color&quot;</span><span class="fu">:</span> <span class="st">&quot;red&quot;</span><span class="fu">}}}</span></span></code></pre></div>
+<p>The server will reply with ok or error:</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true"></a><span class="fu">{</span><span class="dt">&quot;result&quot;</span><span class="fu">:</span> <span class="st">&quot;ok&quot;</span><span class="fu">}</span></span></code></pre></div>
+<p>or</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true"></a><span class="fu">{</span><span class="dt">&quot;result&quot;</span><span class="fu">:</span> <span class="st">&quot;error&quot;</span><span class="fu">,</span> <span class="dt">&quot;message&quot;</span><span class="fu">:</span> <span class="st">&quot;error message&quot;</span><span class="fu">}</span></span></code></pre></div>
+<ul>
+<li><code>deleteDrawing</code>: The client sends a JSON object to the server. The JSON object has the following format:</li>
+</ul>
+<div class="sourceCode" id="cb12"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true"></a><span class="fu">{</span><span class="dt">&quot;action&quot;</span><span class="fu">:</span> <span class="st">&quot;deleteDrawing&quot;</span><span class="fu">,</span> <span class="dt">&quot;data&quot;</span><span class="fu">:</span> <span class="fu">{</span><span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="st">&quot;0aed29ae-1099-4d95-813f-bd88ad456a45&quot;</span><span class="fu">}}</span></span></code></pre></div>
+<p>The server will reply with ok or error:</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true"></a><span class="fu">{</span><span class="dt">&quot;result&quot;</span><span class="fu">:</span> <span class="st">&quot;ok&quot;</span><span class="fu">}</span></span></code></pre></div>
+<p>or</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true"></a><span class="fu">{</span><span class="dt">&quot;result&quot;</span><span class="fu">:</span> <span class="st">&quot;error&quot;</span><span class="fu">,</span> <span class="dt">&quot;message&quot;</span><span class="fu">:</span> <span class="st">&quot;error message&quot;</span><span class="fu">}</span></span></code></pre></div>
+<h1 id="drawing-object-json-format">Drawing Object JSON Format</h1>
+<p>As seen above, the JSON representing each drawing element has the following format:</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true"></a><span class="fu">{</span><span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="st">&quot;0aed29ae-1099-4d95-813f-bd88ad456a45&quot;</span><span class="fu">,</span> <span class="dt">&quot;type&quot;</span><span class="fu">:</span> <span class="st">&quot;rectangle&quot;</span><span class="fu">,</span> <span class="dt">&quot;x&quot;</span><span class="fu">:</span> <span class="dv">10</span><span class="fu">,</span> <span class="dt">&quot;y&quot;</span><span class="fu">:</span> <span class="dv">10</span><span class="fu">,</span> <span class="dt">&quot;isOwner&quot;</span><span class="fu">:</span> <span class="kw">true</span><span class="fu">,</span> <span class="dt">&quot;properties&quot;</span><span class="fu">:</span> <span class="fu">{</span><span class="dt">&quot;width&quot;</span><span class="fu">:</span> <span class="dv">10</span><span class="fu">,</span> <span class="dt">&quot;height&quot;</span><span class="fu">:</span> <span class="dv">10</span><span class="fu">,</span> <span class="dt">&quot;lineColor&quot;</span><span class="fu">:</span> <span class="st">&quot;red&quot;</span><span class="fu">}}</span></span></code></pre></div>
+<p>The <em>id</em> will be generated by the server on adding a shape. You don’t need to send it when adding shapes, and you will get the <em>id</em> in the response. The <em>type</em> can be one of the following: <code>rectangle</code>, <code>ellipse</code>, <code>triangle</code>, <code>line</code>. You can also specific your own types. The <em>isOwner</em> will be true if the shape is added by you and false otherwise. The <em>x</em> and <em>y</em> are the top left co-ordinate of the shape. The <em>properties</em> depend on the type of the drawing object. The following table shows the properties for each type:</p>
+<table>
+<thead>
+<tr class="header">
+<th>Type</th>
+<th>Properties</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>rectangle</td>
+<td>width, height, rotation, borderColor, borderWidth, fillColor</td>
+</tr>
+<tr class="even">
+<td>ellipse</td>
+<td>width, height, rotation, borderColor, borderWidth, fillColor</td>
+</tr>
+<tr class="odd">
+<td>triangle</td>
+<td>x2, y2, x3, y3, rotation, borderColor, borderWidth, fillColor</td>
+</tr>
+<tr class="even">
+<td>line</td>
+<td>x2, y2, lineColor, lineWidth</td>
+</tr>
+</tbody>
+</table>
+<p>The <em>borderColor</em> and <em>fillColor</em> properties are strings representing the color. For both, you should support the following colors: <code>red</code>, <code>green</code>, <code>blue</code>, <code>yellow</code>, <code>black</code>, <code>white</code>, <code>cyan</code>, <code>magenta</code>, <code>orange</code>, <code>pink</code>, <code>gray</code>, <code>darkGray</code>, <code>lightGray</code>. You could also support other color strings or RGB values, but you should do that on another property of your choosing and still keep the color property as described above as fallback for clients not implementing your extension. The <em>rotation</em> is in degrees between 0 to 359. The <em>lineWidth</em> is an integer representing the width of the line, between 0 to 100. The positional co-ordinates and dimensions are floating point numbers between -10000 and 10000.</p>
+<p>As a minimum, your program should support the above properties and values. You can add more properties (up to a maximum of twenty, inclusive of the required ones) if you want to support more features though this might not be shared by other student’s clients. If you receive a type of shape or property that you do not support, you should ignore it. If you do not get a property value that you expect, you should use a default value. The server will only do rudimentary validation, so you should implement robust validation in your client, and discard any invalid data.</p>
+<p>If you add any extra properties (up to the maximum of twenty properties, inclsive of the required ones), you should ensure that they are either a string or an integer/floating point number. If it is a string, it can be a maximum of 42 characters long. If it is an integer or floating point number, it should be between -10000 and 10000.</p>
+<p>Note that to prevent the list of shapes from becoming too big, if you add too many shapes to the server, the server might delete older shapes from your user. You should not also add shapes too frequently, as the server might rate limit you and respond slowly, or return an error.</p>
+<h1 id="testing">Testing</h1>
+<p>Along with your program, you should create a test suite that tests the functionality of your Model. This test suite should be written in JUnit, and should test the broadest possible range of inputs to your Model. You should aim to execute every line of code in your Model somewhere in this test suite, and it should also include edge cases and invalid inputs. Your JUnit tests do not need to test the view/controller or delegate parts of your program, but you should test these thoroughly by hand to make sure that they work.</p>
+<p>As well as running on your own computer, the tests should be runnable on the lab computers or host servers. Make sure to run your JUnit suite on the School infrastructure and ensure that they work before submitting. You should include everything necessary to run the tests in your submission, and your readme should explain clearly how to execute them.</p>
+<h1 id="deliverables">Deliverables</h1>
+<p>For this practical you must include a readme file. This file must:</p>
+<ul>
+<li>List all the features you have implemented;</li>
+<li>Explain clearly how to run your program and how to use all its features;</li>
+<li>Give clear instructions on how to run the JUnit tests you have written.</li>
+</ul>
+<p>When you are finished, you should submit a zip archive containing your source code, your JUnit tests, and your readme, and submit it to MMS in the usual way.</p>
+<h1 id="marking">Marking</h1>
+<p>Grades will be awarded according to the General Mark Descriptors in the <a href="http://info.cs.st-andrews.ac.uk/student-handbook/learning-teaching/feedback.html#Mark_Descriptors">Feedback section</a> of the School Student Handbook. The following table shows some example descriptions for projects that would fall into each band.</p>
+<table>
+<colgroup>
+<col style="width: 9%"></col>
+<col style="width: 90%"></col>
+</colgroup>
+<thead>
+<tr class="header">
+<th>Grade</th>
+<th style="text-align: left;">Examples</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1–3</td>
+<td style="text-align: left;">Little or no working code, and little or no understanding shown.</td>
+</tr>
+<tr class="even">
+<td>4–6</td>
+<td style="text-align: left;">Acceptable code for part of the problem, but with serious issues such as not compiling or running. Some understanding of the issues shown.</td>
+</tr>
+<tr class="odd">
+<td>7</td>
+<td style="text-align: left;">A running stand-alone program that implements some of the basic functionality, but may contain bugs, poor style, and many missing features. Little or no object-oriented design, and little or no documentation.</td>
+</tr>
+<tr class="even">
+<td>8–10</td>
+<td style="text-align: left;">A running stand-alone program that implements most of the basic functionality. Possibly lacks some of the more complex features, has problems with error-handling and poor style. Some documentation is provided.</td>
+</tr>
+<tr class="odd">
+<td>11–13</td>
+<td style="text-align: left;">Implements all shapes and their properties, as well as providing an attempt at sockect communication, with reasonable error-handling and acceptable program design and code quality. Some object-oriented design, and few bugs. Reasonable documentation.</td>
+</tr>
+<tr class="even">
+<td>14–16</td>
+<td style="text-align: left;">Implements all shapes and their properties and the socket communication with a well-structured object-oriented design, and very little code repetition. Possibly has some minor bugs. Good documentation is provided.</td>
+</tr>
+<tr class="odd">
+<td>17–18</td>
+<td style="text-align: left;">Implements the requirements with correct behaviour as well as socket communication and error-handling with a clean object-oriented design. The provided code makes proper use of inheritance, association, polymorphism and encapsulation, with very good method decomposition.</td>
+</tr>
+<tr class="even">
+<td>19–20</td>
+<td style="text-align: left;">Outstanding implementations of all features as above, and possibly some extra features not mentioned in the specification, with exceptional clarity of design and implementation.</td>
+</tr>
+</tbody>
+</table>
+<p>Any extension activities that show insight into object-oriented design and test-driven development may increase your grade, but a good implementation of the stated requirements should be your priority.</p>
+<h1 id="lateness">Lateness</h1>
+<p>The standard penalty for late submission applies (Scheme A: 1 mark per 24-hour period, or part thereof):</p>
+<p><a href="https://info.cs.st-andrews.ac.uk/student-handbook/learning-teaching/assessment.html#lateness-penalties" class="uri">https://info.cs.st-andrews.ac.uk/student-handbook/learning-teaching/assessment.html#lateness-penalties</a></p>
+<h1 id="good-academic-practice">Good Academic Practice</h1>
+<p>The University policy on Good Academic Practice applies:</p>
+<p><a href="https://www.st-andrews.ac.uk/students/rules/academicpractice/" class="uri">https://www.st-andrews.ac.uk/students/rules/academicpractice/</a></p>
+</article>
+</body>
+</html>
