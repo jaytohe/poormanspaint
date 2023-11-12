@@ -4,16 +4,9 @@ import java.awt.Graphics;
 
 public class Rectangle extends Shape {
 
-    private int minX;
-    private int minY;
-    private int width;
-    private int height;
+
     public Rectangle(int startX, int startY, int endX, int endY) {
         super(startX, startY, endX, endY);
-        width = Math.abs(getEndX() - getStartX());
-        height = Math.abs(getEndY() - getStartY());
-        minX = Math.min(getStartX(), getEndX());
-        minY = Math.min(getStartY(), getEndY());
 
     }
 
@@ -26,6 +19,12 @@ public class Rectangle extends Shape {
      */
     @Override
     public boolean contains(int x, int y) {
+
+        int width = Math.abs(getEndX() - getStartX());
+        int height = Math.abs(getEndY() - getStartY());
+        int minX = Math.min(getStartX(), getEndX());
+        int minY = Math.min(getStartY(), getEndY());
+
         if (x >= minX && x <= minX + width && (y == minY || y == minY + height)) {
             return true;
         } // check if point is on top or bottom edge of the rectangle.
@@ -38,6 +37,10 @@ public class Rectangle extends Shape {
 
     }
     public void draw(Graphics g) {
+        int width = Math.abs(getEndX() - getStartX());
+        int height = Math.abs(getEndY() - getStartY());
+        int minX = Math.min(getStartX(), getEndX());
+        int minY = Math.min(getStartY(), getEndY());
         g.drawRect(minX, minY, width, height);
     }
 

@@ -33,6 +33,14 @@ public abstract class Shape {
         return endY;
     }
 
+    public void setEndX(int x) {
+        endX = x;
+    }
+
+    public void setEndY(int y) {
+        endY = y;
+    }
+
     public Color getColor() {
         return color;
     }

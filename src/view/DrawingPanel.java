@@ -8,28 +8,37 @@ import model.shapes.Shape;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.ArrayList;
+import java.awt.event.MouseMotionAdapter;
+import java.util.LinkedList;
 
 public class DrawingPanel extends JPanel {
 
     private Controller controller;
     private ShapeType currentShapeType = ShapeType.LINE;
-    private ArrayList<Shape> shapes; //pointer to the shapes array in Model.
+    private LinkedList<Shape> shapes; //pointer to the shapes array in Model.
     // this allows us to just keep one array in the model and update that.
 
     public DrawingPanel(Controller controller) {
         this.controller = controller;
 
-        this.shapes = new ArrayList<>();
+        this.shapes = new LinkedList<>();
         setBorder(BorderFactory.createLineBorder(Color.black));
         
         addMouseListener(new MouseAdapter() {
             public void mousePressed(MouseEvent e) {
+                System.out.println("mouse pressed");
                 controller.handleMousePressed(e.getX(), e.getY());
             }
-
             public void mouseReleased(MouseEvent e) {
-                controller.handleMouseReleased(e.getX(), e.getY());
+                System.out.println("mouse released");
+                controller.handleMouseReleased();
+            }
+        });
+        
+        addMouseMotionListener(new MouseMotionAdapter() {
+            public void mouseDragged(MouseEvent e) {
+                System.out.println("mouse dragged");
+                controller.handleMouseDragged(e.getX(), e.getY());
             }
         });
     }
@@ -41,37 +50,11 @@ public class DrawingPanel extends JPanel {
         }
     }
 
-    public void updateShapesPointer(ArrayList<Shape> shapes) {
+    public void updateShapesPointer(LinkedList<Shape> shapes) {
         this.shapes = shapes;
         revalidate();
         repaint();
     }
-    /*
-    protected void paintComponent(Graphics g) {
-        super.paintComponent(g);
-        g.setColor(Color.RED);
-
-        switch (currentShapeType) {
-            case LINE:
-                g.drawLine(startX, startY, endX, endY);
-                break;
-            case RECTANGLE:
-                int width = Math.abs(endX - startX);
-                int height = Math.abs(endY - startY);
-                int x = Math.min(startX, endX);
-                int y = Math.min(startY, endY);
-                g.drawRect(x, y, width, height);
-                break;
-            case OVAL:
-                width = Math.abs(endX - startX);
-                height = Math.abs(endY - startY);
-                x = Math.min(startX, endX);
-                y = Math.min(startY, endY);
-                g.drawOval(x, y, width, height);
-                break;
-        }
-    }
-    */
 
     public void setCurrentShapeType(ShapeType shapeType) {
         this.currentShapeType = shapeType;

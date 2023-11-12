@@ -1,8 +1,11 @@
 package model;
 import model.shapes.Shape;
+import model.shapes.Triangle;
+
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 import model.shapes.Line;
 import model.shapes.Rectangle;
@@ -11,14 +14,16 @@ public class Model {
     private ShapeType shapeType;
     private ShapeType oldShapeType;
 
-    private ArrayList<Shape> shapes;
+    private LinkedList<Shape> shapes;
+    private LinkedList<Shape> undoneShapes;
     private PropertyChangeSupport notifier;
 
 
     public Model() {
         shapeType = ShapeType.LINE;
         oldShapeType = ShapeType.LINE;
-        shapes = new ArrayList<>();
+        shapes = new LinkedList<>();
+        undoneShapes = new LinkedList<>();
         this.notifier = new PropertyChangeSupport(this);
     }
 
@@ -36,27 +41,64 @@ public class Model {
         updateSelectedShape();
     }
 
-    public ArrayList<Shape> getShapes() {
+    public LinkedList<Shape> getShapes() {
         return shapes;
     }
 
-    public void drawShape(int startX, int startY, int endX, int endY) {
 
+    private void notifyUndoRedoStates() {
+        notifier.firePropertyChange("undoBtnState", shapes.isEmpty(), !shapes.isEmpty());
+        notifier.firePropertyChange("redoBtnState", undoneShapes.isEmpty(), !undoneShapes.isEmpty());
+    }
+
+    public void undoLastShape() {
+        if (!shapes.isEmpty()) {
+            undoneShapes.push(shapes.pop());
+            notifier.firePropertyChange("drawnShapes", null, shapes);
+        }
+        notifyUndoRedoStates();
+    }
+
+    public void redoShape() {
+        if (!undoneShapes.isEmpty()) {
+            shapes.push(undoneShapes.pop());
+            notifier.firePropertyChange("drawnShapes", null, shapes);
+        }
+        notifyUndoRedoStates();
+    }
+
+
+    public void updateLastShape(int x, int y) {
+        if (!shapes.isEmpty()) {
+            shapes.peek().setEndX(x);
+            shapes.peek().setEndY(y);
+            notifier.firePropertyChange("drawnShapes", null, shapes);
+        }
+    }
+
+    public void drawShape(int startX, int startY, int endX, int endY) {
         
         switch(shapeType) {
             case LINE:
-                shapes.add(new Line(startX, startY, endX, endY));
+                shapes.push(new Line(startX, startY, endX, endY));
                 break;
             case RECTANGLE:
-                shapes.add(new Rectangle(startX, startY, endX, endY));
+                shapes.push(new Rectangle(startX, startY, endX, endY));
                 break;
             case TRIANGLE:
+                shapes.push(new Triangle(startX, startY, endX, endY));
                 break;
             case ELLIPSE:
                 break;
         }
         
+        // Clear the stacks holding undone shapes when a new shape is drawn (That's how MSPaint works)
+        if (!undoneShapes.isEmpty()) {
+            undoneShapes.clear();
+        }
+
         notifier.firePropertyChange("drawnShapes", null, shapes);
+        notifyUndoRedoStates();
     }
 
 

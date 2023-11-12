@@ -7,6 +7,7 @@ import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -44,6 +45,10 @@ public class View implements PropertyChangeListener {
     private JButton triangleButton;
     private JButton ellipseButton;
     private JButton selectedShapeButton;
+
+    //Declare bottom toolbar buttons
+    private JButton undoButton;
+    private JButton redoButton;
     
 
     private static final int FRAME_HEIGHT = 600;
@@ -159,11 +164,19 @@ public class View implements PropertyChangeListener {
     private void buildBottomToolbar() {
 
         //Create buttons
-        JButton undoButton = new JButton("Undo");
-        JButton redoButton = new JButton("Redo");
+        undoButton = new JButton("Undo");
+        redoButton = new JButton("Redo");
+
+        //Default state of undoButton and redoButton
+        undoButton.setEnabled(false);
+        redoButton.setEnabled(false);
+
+        //Undo, redo click listeners
+        undoButton.addActionListener(e -> controller.undoLastShape());
+        redoButton.addActionListener(e -> controller.redoShape());
 
         undoButton.setToolTipText("Undo the last action");
-        redoButton.setToolTipText("Redo the last action.");
+        redoButton.setToolTipText("Redo the last undone action.");
 
         //Add buttons to toolbar
         bottomToolbar.add(undoButton);
@@ -190,10 +203,21 @@ public class View implements PropertyChangeListener {
                 break;
             
             case "drawnShapes":
-                ArrayList<Shape> shapes = (ArrayList<Shape>) event.getNewValue();
+                final LinkedList<Shape> shapes = (LinkedList<Shape>) event.getNewValue();
                 drawingPanel.updateShapesPointer(shapes);
                 break;
             
+            case "undoBtnState":
+                uiAction = () -> {
+                    undoButton.setEnabled((Boolean) event.getNewValue());
+                };
+                
+                break;
+            case "redoBtnState":
+                uiAction = () -> {
+                    redoButton.setEnabled((Boolean) event.getNewValue());
+                };
+                break;
             default:
                 return;
         }
