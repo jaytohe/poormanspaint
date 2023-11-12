@@ -4,9 +4,9 @@ import model.shapes.Triangle;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import java.util.ArrayList;
 import java.util.LinkedList;
 
-import model.shapes.Ellipse;
 import model.shapes.Line;
 import model.shapes.Rectangle;
 
@@ -89,7 +89,6 @@ public class Model {
                 shapes.push(new Triangle(startX, startY, endX, endY));
                 break;
             case ELLIPSE:
-                shapes.push(new Ellipse(startX, startY, endX, endY));
                 break;
         }
         

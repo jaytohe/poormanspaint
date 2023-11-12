@@ -5,10 +5,9 @@ import java.awt.Graphics;
 public class Rectangle extends Shape {
 
 
-    private boolean square;
-    public Rectangle(int startX, int startY, int endX, int endY, boolean square) {
+    public Rectangle(int startX, int startY, int endX, int endY) {
         super(startX, startY, endX, endY);
-        this.square = square;
+
     }
 
     /**
@@ -42,10 +41,6 @@ public class Rectangle extends Shape {
         int height = Math.abs(getEndY() - getStartY());
         int minX = Math.min(getStartX(), getEndX());
         int minY = Math.min(getStartY(), getEndY());
-        if (square) {
-            width = Math.max(width, height);
-            height = width;
-        }
         g.drawRect(minX, minY, width, height);
     }
 
