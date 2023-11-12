@@ -83,7 +83,7 @@ public class Model {
                 shapes.push(new Line(startX, startY, endX, endY));
                 break;
             case RECTANGLE:
-                shapes.push(new Rectangle(startX, startY, endX, endY));
+                shapes.push(new Rectangle(startX, startY, endX, endY, false));
                 break;
             case TRIANGLE:
                 shapes.push(new Triangle(startX, startY, endX, endY));
