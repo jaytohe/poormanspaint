@@ -1,13 +1,13 @@
 package view;
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
 
-import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -20,21 +20,34 @@ import javax.swing.SwingUtilities;
 
 import controller.Controller;
 import model.Model;
+import model.ShapeType;
+import model.shapes.Shape;
 
-public class View implements PropertyChangeListener{
+public class View implements PropertyChangeListener {
 
 
     private Controller controller;
     private Model model;
 
     private JFrame mainFrame;
-    private JPanel contentPane;
+    private DrawingPanel drawingPanel;
     private JMenuBar menuBar;
-    private JToolBar toolbar;
+    private JToolBar bottomToolbar;
+    private JToolBar topToolbar;
     private JPanel bottomPanel;
 
-    private static final int FRAME_HEIGHT = 200;
-    private static final int FRAME_WIDTH = 600;
+
+    //Declare top toolbar buttons;
+    // We want access to these throughout the class, to be able set if they are selected.
+    private JButton lineButton;
+    private JButton rectangleButton;
+    private JButton triangleButton;
+    private JButton ellipseButton;
+    private JButton selectedShapeButton;
+    
+
+    private static final int FRAME_HEIGHT = 600;
+    private static final int FRAME_WIDTH = 800;
 
 
     public View(Model model, Controller controller) {
@@ -43,32 +56,27 @@ public class View implements PropertyChangeListener{
         this.controller = controller;
 
         mainFrame = new JFrame();
-        contentPane = new JPanel(new BorderLayout());
-        bottomPanel = new JPanel(new BorderLayout());
         menuBar = new JMenuBar();
-        toolbar = new JToolBar();
+        drawingPanel = new DrawingPanel(controller);
 
+
+        bottomPanel = new JPanel(new BorderLayout());
+        bottomToolbar = new JToolBar();
+        topToolbar = new JToolBar();
 
         buildMainFrame();
-
-        //Add action listener
-        /*
-        button.addActionListener(
-            new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    controller.incrementClicks();
-                }
-            }
-        );
-        */
         
     }
 
 
     private void buildMainFrame() {
-        buildMenuBar();
-        buildToolbar();
 
+        //JLabel yellowLabel = new JLabel();
+        //yellowLabel.setOpaque(true);
+        //yellowLabel.setBackground(new Color(248, 213, 131));
+        buildMenuBar();
+        buildToolbars();
+        mainFrame.getContentPane().add(drawingPanel, BorderLayout.CENTER);
         mainFrame.setPreferredSize(new Dimension(FRAME_WIDTH, FRAME_HEIGHT));
         mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         mainFrame.setTitle("Poor Man's MSPaint v1.0");
@@ -103,8 +111,52 @@ public class View implements PropertyChangeListener{
         mainFrame.setJMenuBar(menuBar);
     }
 
+    private void buildToolbars() {
+        buildBottomToolbar(); // contains undo, redo.
 
-    private void buildToolbar() {
+        buildTopToolbar(); // contains choice of shape, color
+
+    }
+
+    private void buildTopToolbar() {
+        lineButton = new JButton("Line");
+        rectangleButton = new JButton("Rectangle");
+        triangleButton = new JButton("Triangle");
+        ellipseButton = new JButton("Ellpise");
+
+        //Link to actionListener
+        lineButton.addActionListener(e -> {
+            controller.setShapeType(ShapeType.LINE);
+        });
+        rectangleButton.addActionListener(e -> {
+            controller.setShapeType(ShapeType.RECTANGLE);
+        });
+        triangleButton.addActionListener(e -> {
+            controller.setShapeType(ShapeType.TRIANGLE);
+        });
+        ellipseButton.addActionListener(e -> {
+            controller.setShapeType(ShapeType.ELLIPSE);
+        });
+
+
+        // Select the lineButton by default
+        selectedShapeButton = lineButton;
+        selectedShapeButton.setSelected(true);
+
+
+        // Add shape button to top toolbar
+        topToolbar.add(lineButton);
+        topToolbar.add(rectangleButton);
+        topToolbar.add(triangleButton);
+        topToolbar.add(ellipseButton);
+
+        topToolbar.setFloatable(false);
+
+        mainFrame.getContentPane().add(topToolbar, BorderLayout.PAGE_START);
+    
+    }
+
+    private void buildBottomToolbar() {
 
         //Create buttons
         JButton undoButton = new JButton("Undo");
@@ -114,29 +166,61 @@ public class View implements PropertyChangeListener{
         redoButton.setToolTipText("Redo the last action.");
 
         //Add buttons to toolbar
-        toolbar.add(undoButton);
-        toolbar.add(redoButton);
+        bottomToolbar.add(undoButton);
+        bottomToolbar.add(redoButton);
 
-        toolbar.setFloatable(false);
+        bottomToolbar.setFloatable(false);
 
         //Add toolbar to bottom panel and add that to main frame on bottom right.
-        bottomPanel.add(toolbar, BorderLayout.LINE_END);
-        mainFrame.add(bottomPanel, BorderLayout.PAGE_END);
+        bottomPanel.add(bottomToolbar, BorderLayout.LINE_END);
+        mainFrame.getContentPane().add(bottomPanel, BorderLayout.PAGE_END);
     }
 
         /** Displays new total. Called by model whenever a value updates. */
     public void propertyChange(PropertyChangeEvent event) {
 
-        // event has the new value written into it
-        int newClickCount = (int) event.getNewValue();
+        Runnable uiAction = null;
 
-        SwingUtilities.invokeLater(
-                new Runnable() {
-                    public void run() {
-                        //label.setText("Number of clicks: " + newClickCount);
-                        //frame.repaint(); label setText automatically calls repaint.
-                    }
-        });
+        switch(event.getPropertyName()) {
+            case "selectedShape":
+                uiAction = () -> {
+                    drawingPanel.setCurrentShapeType((ShapeType) event.getNewValue());
+                    updateSelectedShapeButton((ShapeType) event.getNewValue());
+                };
+                break;
+            
+            case "drawnShapes":
+                ArrayList<Shape> shapes = (ArrayList<Shape>) event.getNewValue();
+                drawingPanel.updateShapesPointer(shapes);
+                break;
+            
+            default:
+                return;
+        }
+
+        if (uiAction != null) {
+            SwingUtilities.invokeLater(uiAction);
+        }
+    }
+
+    private void updateSelectedShapeButton(ShapeType shapeType) {
+
+        selectedShapeButton.setSelected(false);
+        switch(shapeType) {
+            case LINE:
+                selectedShapeButton = lineButton;
+            break;
+            case RECTANGLE:
+                selectedShapeButton = rectangleButton;
+            break;
+            case TRIANGLE:
+                selectedShapeButton = triangleButton;
+            break;
+            case ELLIPSE:
+                selectedShapeButton = ellipseButton;
+            break;
+        }
+        selectedShapeButton.setSelected(true);
     }
 
     public static void main(String[] args) {
