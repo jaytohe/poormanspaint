@@ -1,5 +1,6 @@
 package model;
 import model.shapes.Shape;
+import model.shapes.ShiftKeyModifiable;
 import model.shapes.Triangle;
 
 import java.beans.PropertyChangeListener;
@@ -68,28 +69,34 @@ public class Model {
     }
 
 
-    public void updateLastShape(int x, int y) {
+    public void updateLastShape(int x, int y, boolean SHIFTKeyDown) {
         if (!shapes.isEmpty()) {
-            shapes.peek().setEndX(x);
-            shapes.peek().setEndY(y);
+            Shape lastShape = shapes.peek();
+            lastShape.setEndX(x);
+            lastShape.setEndY(y);
+            
+            if (lastShape instanceof ShiftKeyModifiable) {
+                ((ShiftKeyModifiable) lastShape).setSHIFTKeyState(SHIFTKeyDown);
+            }
+
             notifier.firePropertyChange("drawnShapes", null, shapes);
         }
     }
 
-    public void drawShape(int startX, int startY, int endX, int endY) {
+    public void drawShape(int startX, int startY, int endX, int endY, boolean SHIFTKeyDown) {
         
         switch(shapeType) {
             case LINE:
                 shapes.push(new Line(startX, startY, endX, endY));
                 break;
             case RECTANGLE:
-                shapes.push(new Rectangle(startX, startY, endX, endY, false));
+                shapes.push(new Rectangle(startX, startY, endX, endY, SHIFTKeyDown));
                 break;
             case TRIANGLE:
                 shapes.push(new Triangle(startX, startY, endX, endY));
                 break;
             case ELLIPSE:
-                shapes.push(new Ellipse(startX, startY, endX, endY));
+                shapes.push(new Ellipse(startX, startY, endX, endY, SHIFTKeyDown));
                 break;
         }
         

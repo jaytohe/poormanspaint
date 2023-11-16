@@ -2,13 +2,18 @@ package model.shapes;
 
 import java.awt.Graphics;
 
-public class Rectangle extends Shape {
+public class Rectangle extends Shape implements ShiftKeyModifiable {
 
 
-    private boolean square;
-    public Rectangle(int startX, int startY, int endX, int endY, boolean square) {
+    private boolean drawSquare;
+
+    public Rectangle(int startX, int startY, int endX, int endY, boolean drawSquare) {
         super(startX, startY, endX, endY);
-        this.square = square;
+        this.drawSquare = drawSquare;
+    }
+
+    public void setSHIFTKeyState(boolean state) {
+        drawSquare = state;
     }
 
     /**
@@ -42,9 +47,8 @@ public class Rectangle extends Shape {
         int height = Math.abs(getEndY() - getStartY());
         int minX = Math.min(getStartX(), getEndX());
         int minY = Math.min(getStartY(), getEndY());
-        if (square) {
-            width = Math.max(width, height);
-            height = width;
+        if (drawSquare) {
+            height = width = Math.max(width, height);
         }
         g.drawRect(minX, minY, width, height);
     }

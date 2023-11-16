@@ -3,12 +3,16 @@ package model.shapes;
 import java.awt.Graphics;
 
 
-public class Ellipse extends Shape {
+public class Ellipse extends Shape implements ShiftKeyModifiable {
 
-    private boolean circle;
-    public Ellipse(int startX, int startY, int endX, int endY) {
+    private boolean drawCircle;
+    public Ellipse(int startX, int startY, int endX, int endY, boolean drawCircle) {
         super(startX, startY, endX, endY);
-        this.circle = true;
+        this.drawCircle = drawCircle;
+    }
+
+    public void setSHIFTKeyState(boolean state) {
+        drawCircle = state;
     }
 
     @Override
@@ -23,7 +27,7 @@ public class Ellipse extends Shape {
         int minY = Math.min(getStartY(), getEndY());
 
         
-        if (circle) {
+        if (drawCircle) {
 
             //circle is an ellipse drawn in a bounded square.
             // set diameter as the max of the width and height of the bounded rectangle of ellipse.

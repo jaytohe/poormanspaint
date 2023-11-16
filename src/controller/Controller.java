@@ -12,6 +12,8 @@ public class Controller {
 
     private boolean newShape = true;
 
+    private boolean SHIFTKeyDown = false;
+
     public Controller(Model model) {
         this.model = model;
     }
@@ -29,6 +31,10 @@ public class Controller {
         model.setShapeType(shapeType);
     }
 
+    public void setSHIFTKeyState(boolean state) {
+        SHIFTKeyDown = state;
+    }
+
     public void handleMousePressed(int x, int y) {
         this.startX = x;
         this.startY = y;
@@ -37,12 +43,11 @@ public class Controller {
 
     public void handleMouseDragged(int x, int y) {
         if (newShape) {
-            model.drawShape(startX, startY, x, y);
+            model.drawShape(startX, startY, x, y, SHIFTKeyDown);
             newShape = false;
         }
         else {
-            System.out.println("here");
-            model.updateLastShape(x, y);
+            model.updateLastShape(x, y, SHIFTKeyDown);
         }
     }
 

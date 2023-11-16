@@ -141,6 +141,7 @@ public class View implements PropertyChangeListener {
         });
         ellipseButton.addActionListener(e -> {
             controller.setShapeType(ShapeType.ELLIPSE);
+            //drawingPanel.requestFocus(); //request focus so we can listen for SHIFT key.
         });
 
 

@@ -6,9 +6,7 @@ import controller.Controller;
 import model.ShapeType;
 import model.shapes.Shape;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionAdapter;
+import java.awt.event.*;
 import java.util.LinkedList;
 
 public class DrawingPanel extends JPanel {
@@ -23,11 +21,13 @@ public class DrawingPanel extends JPanel {
 
         this.shapes = new LinkedList<>();
         setBorder(BorderFactory.createLineBorder(Color.black));
-        
+        setFocusable(true); // Allow the panel to get focus
+
         addMouseListener(new MouseAdapter() {
             public void mousePressed(MouseEvent e) {
                 System.out.println("mouse pressed");
                 controller.handleMousePressed(e.getX(), e.getY());
+                
             }
             public void mouseReleased(MouseEvent e) {
                 System.out.println("mouse released");
@@ -36,11 +36,38 @@ public class DrawingPanel extends JPanel {
         });
         
         addMouseMotionListener(new MouseMotionAdapter() {
+            public void mouseMoved(MouseEvent e) {
+                // Request focus when the mouse is moved over the panel
+                // such that we can detect a SHIFT key press or release.
+                requestFocusInWindow();
+            }
             public void mouseDragged(MouseEvent e) {
                 System.out.println("mouse dragged");
                 controller.handleMouseDragged(e.getX(), e.getY());
             }
         });
+
+        addKeyListener(new KeyAdapter() {
+            public void keyPressed(KeyEvent e) {
+                if (e.isShiftDown()) {
+                    // Shift key is pressed
+                    System.out.println("Shift key pressed");
+                    // Add your shift key logic here
+                    controller.setSHIFTKeyState(true);
+                }
+            }
+
+            public void keyReleased(KeyEvent e) {
+                if (!e.isShiftDown()) {
+                    // Shift key is released
+                    System.out.println("Shift key released");
+                    // Add your shift key release logic here
+                    controller.setSHIFTKeyState(false);
+                }
+            }
+        });
+
+        requestFocusInWindow(); // Request focus for the panel initially
     }
 
     public void paintComponent(Graphics g) {
@@ -59,7 +86,6 @@ public class DrawingPanel extends JPanel {
     public void setCurrentShapeType(ShapeType shapeType) {
         this.currentShapeType = shapeType;
     }
-
 
     
     /*
