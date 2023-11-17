@@ -52,6 +52,4 @@ public class Rectangle extends Shape implements ShiftKeyModifiable {
         }
         g.drawRect(minX, minY, width, height);
     }
-
-
 }

@@ -2,6 +2,7 @@ package view;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
@@ -16,7 +17,9 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JSpinner;
 import javax.swing.JToolBar;
+import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingUtilities;
 
 import controller.Controller;
@@ -33,7 +36,8 @@ public class View implements PropertyChangeListener {
     private JFrame mainFrame;
     private DrawingPanel drawingPanel;
     private JMenuBar menuBar;
-    private JToolBar bottomToolbar;
+    private JToolBar actionsToolbar; //Contains Undo, Redo and Select.
+    private JToolBar selectOptionsToolbar; //Contains Rotation, Scale.
     private JToolBar topToolbar;
     private JPanel bottomPanel;
 
@@ -49,6 +53,11 @@ public class View implements PropertyChangeListener {
     //Declare bottom toolbar buttons
     private JButton undoButton;
     private JButton redoButton;
+    private JButton selectButton;
+
+    //Declare components of selectOptionsToolbar
+    private JSpinner rotationSpinner;
+    private JSpinner scalingSpinner;
     
 
     private static final int FRAME_HEIGHT = 600;
@@ -66,7 +75,8 @@ public class View implements PropertyChangeListener {
 
 
         bottomPanel = new JPanel(new BorderLayout());
-        bottomToolbar = new JToolBar();
+        actionsToolbar = new JToolBar();
+        selectOptionsToolbar = new JToolBar();
         topToolbar = new JToolBar();
 
         buildMainFrame();
@@ -117,7 +127,9 @@ public class View implements PropertyChangeListener {
     }
 
     private void buildToolbars() {
-        buildBottomToolbar(); // contains undo, redo.
+        buildactionsToolbar(); // contains undo, redo.
+        buildSelectOptionsToolbar();
+        mainFrame.getContentPane().add(bottomPanel, BorderLayout.PAGE_END);
 
         buildTopToolbar(); // contains choice of shape, color
 
@@ -162,11 +174,42 @@ public class View implements PropertyChangeListener {
     
     }
 
-    private void buildBottomToolbar() {
+    private void buildSelectOptionsToolbar() {
+
+        selectOptionsToolbar.setLayout(new FlowLayout());
+
+        // Create a spinner that controls shape rotation (0 to 360 degrees).
+        rotationSpinner = new JSpinner(new SpinnerNumberModel(0, 0, 360, 1));
+        
+        //Create a spinner that controls the scaling factor of the shape 0x to 4x in 0.1 increments.
+        scalingSpinner = new JSpinner(new SpinnerNumberModel(1.0, 0.0, 4.0, 0.1));
+        
+        // Set the preferred size of the spinners
+        rotationSpinner.setPreferredSize(new Dimension(50, rotationSpinner.getPreferredSize().height));//#endregion
+        scalingSpinner.setPreferredSize(new Dimension(50, scalingSpinner.getPreferredSize().height));
+        
+        rotationSpinner.addChangeListener(e -> {
+            //controller.setRotation((int) rotationSpinner.getValue());
+        });
+
+        selectOptionsToolbar.add(new JLabel("Rotation: "));
+        selectOptionsToolbar.add(rotationSpinner);
+
+        selectOptionsToolbar.add(new JLabel("Scale: "));
+        selectOptionsToolbar.add(scalingSpinner);
+
+        selectOptionsToolbar.setFloatable(false);
+        selectOptionsToolbar.setVisible(true);
+
+        bottomPanel.add(selectOptionsToolbar, BorderLayout.LINE_START);
+    }
+
+    private void buildactionsToolbar() {
 
         //Create buttons
         undoButton = new JButton("Undo");
         redoButton = new JButton("Redo");
+        selectButton = new JButton("Select");
 
         //Default state of undoButton and redoButton
         undoButton.setEnabled(false);
@@ -175,19 +218,21 @@ public class View implements PropertyChangeListener {
         //Undo, redo click listeners
         undoButton.addActionListener(e -> controller.undoLastShape());
         redoButton.addActionListener(e -> controller.redoShape());
+        selectButton.addActionListener(e -> controller.toggleSelectMode());
 
         undoButton.setToolTipText("Undo the last action");
         redoButton.setToolTipText("Redo the last undone action.");
+        selectButton.setToolTipText("Select a shape drawn on the screen.");
 
         //Add buttons to toolbar
-        bottomToolbar.add(undoButton);
-        bottomToolbar.add(redoButton);
+        actionsToolbar.add(selectButton);
+        actionsToolbar.add(undoButton);
+        actionsToolbar.add(redoButton);
 
-        bottomToolbar.setFloatable(false);
+        actionsToolbar.setFloatable(false);
 
         //Add toolbar to bottom panel and add that to main frame on bottom right.
-        bottomPanel.add(bottomToolbar, BorderLayout.LINE_END);
-        mainFrame.getContentPane().add(bottomPanel, BorderLayout.PAGE_END);
+        bottomPanel.add(actionsToolbar, BorderLayout.LINE_END);
     }
 
         /** Displays new total. Called by model whenever a value updates. */
@@ -196,7 +241,7 @@ public class View implements PropertyChangeListener {
         Runnable uiAction = null;
 
         switch(event.getPropertyName()) {
-            case "selectedShape":
+            case "selectedShapeType":
                 uiAction = () -> {
                     drawingPanel.setCurrentShapeType((ShapeType) event.getNewValue());
                     updateSelectedShapeButton((ShapeType) event.getNewValue());
@@ -207,7 +252,7 @@ public class View implements PropertyChangeListener {
                 final LinkedList<Shape> shapes = (LinkedList<Shape>) event.getNewValue();
                 drawingPanel.updateShapesPointer(shapes);
                 break;
-            
+                
             case "undoBtnState":
                 uiAction = () -> {
                     undoButton.setEnabled((Boolean) event.getNewValue());

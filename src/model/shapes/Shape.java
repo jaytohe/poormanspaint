@@ -4,11 +4,11 @@ import java.awt.Color;
 import java.awt.Graphics;
 
 public abstract class Shape {
-    private int startX;
-    private int startY;
-    private int endX;
-    private int endY;
-    private Color color;
+    protected int startX;
+    protected int startY;
+    protected int endX;
+    protected int endY;
+    protected Color color;
 
     public Shape(int startX, int startY, int endX, int endY) {
         this.startX = startX;
@@ -33,6 +33,14 @@ public abstract class Shape {
         return endY;
     }
 
+    public void setStartX(int x) {
+        startX = x;
+    }
+
+    public void setStartY(int y) {
+        startY = y;
+    }
+
     public void setEndX(int x) {
         endX = x;
     }
@@ -49,7 +57,15 @@ public abstract class Shape {
         this.color = color;
     }
 
-    public abstract void draw(Graphics g);
+    public void move(int dx, int dy) {
+        //Move the start and end points
+        // by offset defined by dx and dy
+        startX += dx;
+        startY += dy;
+        endX += dx;
+        endY += dy;
+    }
 
+    public abstract void draw(Graphics g);
     public abstract boolean contains(int x, int y);
 }

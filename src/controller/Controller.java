@@ -11,6 +11,7 @@ public class Controller {
     private int startX, startY;
 
     private boolean newShape = true;
+    private boolean selectMode = false;
 
     private boolean SHIFTKeyDown = false;
 
@@ -31,6 +32,14 @@ public class Controller {
         model.setShapeType(shapeType);
     }
 
+    public void toggleSelectMode() {
+        selectMode = !selectMode;
+
+        if (!selectMode) {
+            model.removeSelection();
+        }
+    }
+
     public void setSHIFTKeyState(boolean state) {
         SHIFTKeyDown = state;
     }
@@ -39,15 +48,26 @@ public class Controller {
         this.startX = x;
         this.startY = y;
         newShape = true;
+
+        if (selectMode) {
+            model.findShapeInPos(startX, startY);
+        }
     }
 
     public void handleMouseDragged(int x, int y) {
-        if (newShape) {
-            model.drawShape(startX, startY, x, y, SHIFTKeyDown);
-            newShape = false;
+        if (!selectMode) {
+            if (newShape) {
+                model.drawShape(startX, startY, x, y, SHIFTKeyDown);
+                newShape = false;
+            }
+            else {
+                model.updateLastShape(x, y, SHIFTKeyDown);
+            }
         }
         else {
-            model.updateLastShape(x, y, SHIFTKeyDown);
+            model.moveSelectedShape(x-startX, y-startY);
+            startX = x;
+            startY = y;
         }
     }
 

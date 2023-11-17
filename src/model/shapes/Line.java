@@ -38,7 +38,7 @@ public class Line extends Shape {
         // Ideally we would just check if exceptedY == y.
         // But because of rounding/precision error, we give an uncertainty of 1 unit
         // to the difference between expectedY and y
-        if (Math.abs(y - expectedY) <= 1) {
+        if (Math.abs(y - expectedY) <= 1.5) {
             // Check if the x value is within the bounds of the line
             if (x >= Math.min(startX, endX) && x <= Math.max(startX, endX)) {
                 return true;
@@ -47,7 +47,6 @@ public class Line extends Shape {
 
         return false;
     }
-
     @Override
     public void draw(Graphics g) {
         g.drawLine(getStartX(), getStartY(), getEndX(), getEndY());

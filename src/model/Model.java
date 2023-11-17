@@ -19,6 +19,7 @@ public class Model {
     private LinkedList<Shape> undoneShapes;
     private PropertyChangeSupport notifier;
 
+    private Shape selectedShape = null;
 
     public Model() {
         shapeType = ShapeType.LINE;
@@ -33,7 +34,7 @@ public class Model {
     }
 
     private void updateSelectedShape() {
-        notifier.firePropertyChange("selectedShape", oldShapeType, shapeType);
+        notifier.firePropertyChange("selectedShapeType", oldShapeType, shapeType);
         oldShapeType = shapeType;
     }
 
@@ -74,11 +75,35 @@ public class Model {
             Shape lastShape = shapes.peek();
             lastShape.setEndX(x);
             lastShape.setEndY(y);
-            
+
             if (lastShape instanceof ShiftKeyModifiable) {
                 ((ShiftKeyModifiable) lastShape).setSHIFTKeyState(SHIFTKeyDown);
             }
 
+            notifier.firePropertyChange("drawnShapes", null, shapes);
+        }
+    }
+
+
+    public void findShapeInPos(int x, int y) {
+        if (!shapes.isEmpty()) {
+            for (Shape shape : shapes) {
+                if (shape.contains(x, y)) {
+                    this.selectedShape = shape;
+                    break;
+                }
+            }
+        }
+    }
+
+    public void removeSelection() {
+        this.selectedShape = null;
+    }
+
+    public void moveSelectedShape(int xOffset, int yOffset) {
+        if (selectedShape != null) {
+            selectedShape.move(xOffset, yOffset);
+            // Notify the view to redraw the shapes
             notifier.firePropertyChange("drawnShapes", null, shapes);
         }
     }
