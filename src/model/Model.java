@@ -3,6 +3,7 @@ import model.shapes.Shape;
 import model.shapes.ShiftKeyModifiable;
 import model.shapes.Triangle;
 
+import java.awt.Point;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.LinkedList;
@@ -20,6 +21,7 @@ public class Model {
     private PropertyChangeSupport notifier;
 
     private Shape selectedShape = null;
+    private boolean selectModeEnabled = false;
 
     public Model() {
         shapeType = ShapeType.LINE;
@@ -73,8 +75,10 @@ public class Model {
     public void updateLastShape(int x, int y, boolean SHIFTKeyDown) {
         if (!shapes.isEmpty()) {
             Shape lastShape = shapes.peek();
-            lastShape.setEndX(x);
-            lastShape.setEndY(y);
+
+            lastShape.setEndPoint(new Point(x, y));
+            //lastShape.setEndX(x);
+            //lastShape.setEndY(y);
 
             if (lastShape instanceof ShiftKeyModifiable) {
                 ((ShiftKeyModifiable) lastShape).setSHIFTKeyState(SHIFTKeyDown);
@@ -85,6 +89,12 @@ public class Model {
     }
 
 
+    /**
+     * Finds a shape at the specified position.
+     *
+     * @param  x  the x-coordinate of the position
+     * @param  y  the y-coordinate of the position
+     */
     public void findShapeInPos(int x, int y) {
         if (!shapes.isEmpty()) {
             for (Shape shape : shapes) {
@@ -96,13 +106,36 @@ public class Model {
         }
     }
 
-    public void removeSelection() {
-        this.selectedShape = null;
+    public boolean isSelectModeEnabled() {
+        return selectModeEnabled;
+    }
+
+    public void toggleSelectMode() {
+        this.selectModeEnabled = !this.selectModeEnabled;
+        this.selectedShape = selectModeEnabled ? this.selectedShape : null;
+        notifier.firePropertyChange("selectModeEnabled", null, selectModeEnabled);
     }
 
     public void moveSelectedShape(int xOffset, int yOffset) {
         if (selectedShape != null) {
             selectedShape.move(xOffset, yOffset);
+            // Notify the view to redraw the shapes
+            notifier.firePropertyChange("drawnShapes", null, shapes);
+        }
+    }
+
+    public void rotateSelectedShape(int angle) {
+        if (selectedShape != null) {
+            selectedShape.setRotationAngle(angle);
+            System.out.println("Set rotation angle of shape to " + angle);
+            // Notify the view to redraw the shapes
+            notifier.firePropertyChange("drawnShapes", null, shapes);
+        }
+    }
+
+    public void scaleSelectedShape(double factor) {
+        if (selectedShape != null) {
+            selectedShape.setScaleFactor(factor);
             // Notify the view to redraw the shapes
             notifier.firePropertyChange("drawnShapes", null, shapes);
         }

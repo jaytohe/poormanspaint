@@ -189,7 +189,13 @@ public class View implements PropertyChangeListener {
         scalingSpinner.setPreferredSize(new Dimension(50, scalingSpinner.getPreferredSize().height));
         
         rotationSpinner.addChangeListener(e -> {
-            //controller.setRotation((int) rotationSpinner.getValue());
+            //System.out.println("Rotation changed to: " + rotationSpinner.getValue());
+            controller.rotateSelectedShape(((Integer) rotationSpinner.getValue()).intValue());
+        });
+
+        scalingSpinner.addChangeListener(e -> {
+            //System.out.println("Scaling changed to: " + scalingSpinner.getValue());
+            controller.scaleSelectedShape(((Double) scalingSpinner.getValue()).doubleValue());
         });
 
         selectOptionsToolbar.add(new JLabel("Rotation: "));
@@ -209,7 +215,7 @@ public class View implements PropertyChangeListener {
         //Create buttons
         undoButton = new JButton("Undo");
         redoButton = new JButton("Redo");
-        selectButton = new JButton("Select");
+        selectButton = new JButton("Select Mode: Off");
 
         //Default state of undoButton and redoButton
         undoButton.setEnabled(false);
@@ -223,7 +229,6 @@ public class View implements PropertyChangeListener {
         undoButton.setToolTipText("Undo the last action");
         redoButton.setToolTipText("Redo the last undone action.");
         selectButton.setToolTipText("Select a shape drawn on the screen.");
-
         //Add buttons to toolbar
         actionsToolbar.add(selectButton);
         actionsToolbar.add(undoButton);
@@ -235,16 +240,29 @@ public class View implements PropertyChangeListener {
         bottomPanel.add(actionsToolbar, BorderLayout.LINE_END);
     }
 
-        /** Displays new total. Called by model whenever a value updates. */
+
+    /**
+     * A listener method that is called when a property change event occurs.
+     *
+     * When the model's state changes, a notification is sent to this method
+     * with the name of the property that has changes and its new value (and old value in some cases).
+     * 
+     * We encapsulate the action to be performed on the UI thread in a Runnable
+     * object that is ran safely using SwingUtils.invokeLater().
+     * 
+     * @param event the property change event
+     */
     public void propertyChange(PropertyChangeEvent event) {
 
-        Runnable uiAction = null;
+        Runnable uiAction = null; // The action to be performed on the UI thread
 
         switch(event.getPropertyName()) {
-            case "selectedShapeType":
+            case "selectedShapeType": // When the user selects a different shape to be drawn
                 uiAction = () -> {
-                    drawingPanel.setCurrentShapeType((ShapeType) event.getNewValue());
+                    //drawingPanel.setCurrentShapeType((ShapeType) event.getNewValue());
+                    // Make the new shape button that was chosen the selected one.
                     updateSelectedShapeButton((ShapeType) event.getNewValue());
+                    
                 };
                 break;
             
@@ -262,6 +280,15 @@ public class View implements PropertyChangeListener {
             case "redoBtnState":
                 uiAction = () -> {
                     redoButton.setEnabled((Boolean) event.getNewValue());
+                };
+                break;
+
+            case "selectModeEnabled":
+                uiAction = () -> {
+                    boolean selectModeEnabled = (Boolean) event.getNewValue();
+                    selectOptionsToolbar.setVisible(selectModeEnabled);
+                    selectButton.setText(selectModeEnabled ? "Select Mode: On" : "Select Mode: Off");
+                    selectButton.setSelected(selectModeEnabled);
                 };
                 break;
             default:
