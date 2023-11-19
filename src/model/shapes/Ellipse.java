@@ -1,6 +1,7 @@
 package model.shapes;
 
-import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.geom.Point2D;
 
 
 public class Ellipse extends Shape implements ShiftKeyModifiable {
@@ -16,7 +17,7 @@ public class Ellipse extends Shape implements ShiftKeyModifiable {
     }
 
     @Override
-    public void draw(Graphics g) {
+    public void draw(Graphics2D g) {
 
         //get width and height of the bounding rectangle of the ellipse.
         int width = Math.abs(getEndX() - getStartX());
@@ -46,6 +47,18 @@ public class Ellipse extends Shape implements ShiftKeyModifiable {
     @Override
     public boolean contains(int x, int y) {
         return false;
+    }
+
+    @Override
+    protected Point2D getCentroid() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getCentroid'");
+    }
+
+    @Override
+    protected void scale() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'scale'");
     }
     
 }

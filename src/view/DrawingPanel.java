@@ -12,7 +12,7 @@ import java.util.LinkedList;
 public class DrawingPanel extends JPanel {
 
     private Controller controller;
-    private ShapeType currentShapeType = ShapeType.LINE;
+    //private ShapeType currentShapeType = ShapeType.LINE;
     private LinkedList<Shape> shapes; //pointer to the shapes array in Model.
     // this allows us to just keep one array in the model and update that.
 
@@ -72,8 +72,9 @@ public class DrawingPanel extends JPanel {
 
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
+        Graphics2D g2 = (Graphics2D) g;
         for (Shape shape : shapes) {
-            shape.draw(g);
+            shape.draw(g2);
         }
     }
 
@@ -83,9 +84,9 @@ public class DrawingPanel extends JPanel {
         repaint();
     }
 
-    public void setCurrentShapeType(ShapeType shapeType) {
-        this.currentShapeType = shapeType;
-    }
+    //public void setCurrentShapeType(ShapeType shapeType) {
+    //    this.currentShapeType = shapeType;
+    //}
 
     
     /*
