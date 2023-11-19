@@ -1,14 +1,14 @@
 package model.shapes;
 
-import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Point;
+import java.awt.geom.Point2D;
 
 public class Line extends Shape {
     
     public Line(int startX, int startY, int endX, int endY) {
         super(startX, startY, endX, endY);
     }
-
-
 
     /**
      * Check if the passed in point is on the line and within bounds
@@ -20,10 +20,16 @@ public class Line extends Shape {
     @Override
     public boolean contains(int x, int y) {
         //check if point is on the line and within bounds
-        int startX = getStartX();
-        int startY = getStartY();
-        int endX = getEndX();
-        int endY = getEndY();
+
+
+        Point startPoint = getRotatedStartPoint();
+        Point endPoint = getRotatedEndPoint();
+        
+        double startX = startPoint.getX();
+        double startY = startPoint.getY();
+        double endX = endPoint.getX();
+        double endY = endPoint.getY();
+    
 
         // Calculate the slope of the line
         double slope = (double) (endY - startY) / (endX - startX);
@@ -47,8 +53,49 @@ public class Line extends Shape {
 
         return false;
     }
+
+
+    /*
+    protected void scale() {
+        Point2D midpoint = getCentroid();
+
+        double xDiff = midpoint.getX() - getStartPoint().getX();
+        double yDiff = midpoint.getY() - getStartPoint().getY();
+
+        scaledStartPoint = new Point((int) (midpoint.getX() - xDiff * scaleFactor), (int) (midpoint.getY() - yDiff * scaleFactor));
+        
+        xDiff = midpoint.getX() - getEndPoint().getX();
+        yDiff = midpoint.getY() - getEndPoint().getY();
+
+        scaledEndPoint = new Point((int) (midpoint.getX() - xDiff * scaleFactor), (int) (midpoint.getY() - yDiff * scaleFactor));
+    }*/
+
+
+    /*
+    protected Point2D getCentroid() {
+        //Midpoint of the x axis
+        double midpointX = (getMinScaledX() + getMaxScaledX()) /2;
+        
+        //Midpoint of the y axis
+        double midpointY = (getMinScaledY() + getMaxScaledY()) /2;
+        
+        return new Point2D.Double(midpointX, midpointY);
+    }*/
+
+    protected Point2D getCentroid() {
+        //Midpoint of the x axis
+        double midpointX = (startPoint.x + getScaledEndPoint().x) / 2;
+        //Midpoint of the y axis
+        double midpointY = (startPoint.y + getScaledEndPoint().y) / 2;
+        return new Point2D.Double(midpointX, midpointY);    
+    }
+
     @Override
-    public void draw(Graphics g) {
-        g.drawLine(getStartX(), getStartY(), getEndX(), getEndY());
+    public void draw(Graphics2D g) {
+        super.draw(g);
+        g.drawLine(startPoint.x, startPoint.y, getScaledEndPoint().x, getScaledEndPoint().y);
+        if (beforeRotation != null) {
+            g.setTransform(beforeRotation);
+        }
     }
 }
