@@ -14,10 +14,10 @@ public class Triangle extends Shape {
     public void draw(Graphics2D g) {
         super.draw(g);
         
-        int width = Math.abs(getEndX() - getStartX());
-        int height = Math.abs(getEndY() - getStartY());
-        int minX = Math.min(getStartX(), getEndX());
-        int minY = Math.min(getStartY(), getEndY());
+        int width = getWidth();
+        int height = getHeight();
+        int minX = getTopLeftPoint().x;
+        int minY = getTopLeftPoint().y;
         
         int[] xPoints = {minX, minX + width, minX + width / 2};
         int[] yPoints = {minY + height, minY + height, minY};
@@ -30,8 +30,13 @@ public class Triangle extends Shape {
     }
     @Override
     public boolean contains(int x, int y) {
-        int[] xPoints = {getStartX(), getEndX(), getStartX() + ((getEndX() - getStartX()) / 2)};
-        int[] yPoints = {getStartY(), getEndY(), getEndY()};
+
+
+        //int[] xPoints = {getStartX(), getEndX(), getStartX() + ((getEndX() - getStartX()) / 2)};
+        //int[] yPoints = {getStartY(), getEndY(), getEndY()};
+
+        int[] xPoints = {getRotatedStartPoint().x, getRotatedEndPoint().x, getRotatedStartPoint().x + ((getRotatedEndPoint().x - getRotatedStartPoint().x) / 2)};
+        int[] yPoints = {getRotatedStartPoint().y, getRotatedEndPoint().y, getRotatedEndPoint().y};
 
         // Calculate the area of the triangle using the given points
         double area = 0.5 * (-yPoints[1] * xPoints[2] + yPoints[0] * (-xPoints[1] + xPoints[2]) + xPoints[0] * (yPoints[1] - yPoints[2]) + xPoints[1] * yPoints[2]);
@@ -47,22 +52,16 @@ public class Triangle extends Shape {
 
     @Override
     protected Point2D getCentroid() {
-        int width = Math.abs(getEndX() - getStartX());
-        int height = Math.abs(getEndY() - getStartY());
-        int minX = Math.min(getStartX(), getEndX());
-        int minY = Math.min(getStartY(), getEndY());
+        int width = getWidth();
+        int height = getHeight();
+        int minX = getTopLeftPoint().x;
+        int minY = getTopLeftPoint().y;
         
         // The centroid of a triangle is given by ((x1+x2+x3)/3, (y1+y2+y3)/3)
         int[] xPoints = {minX, minX + width, minX + width / 2};
         int[] yPoints = {minY + height, minY + height, minY};
 
         return new Point2D.Double((xPoints[0] + xPoints[1] + xPoints[2]) / 3, (yPoints[0] + yPoints[1] + yPoints[2]) / 3);
-    }
-
-    @Override
-    protected void scale() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'scale'");
     }
 
 }
