@@ -8,6 +8,8 @@ import java.awt.Color;
 import java.awt.Point;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import java.io.File;
+import java.io.IOException;
 import java.util.Iterator;
 import java.util.LinkedList;
 
@@ -214,6 +216,14 @@ public class Model {
 
         notifier.firePropertyChange("drawnShapes", null, shapes);
         notifyUndoRedoStates();
+    }
+
+    public void exportCanvasAsImage(File selectedFilePath, int width, int height) 
+    throws IOException, IllegalArgumentException {
+
+        System.out.println("width: "+width);
+        System.out.println("height: "+height);
+        ImageExporter.exportShapesToImage(shapes, selectedFilePath, width, height);
     }
 
 

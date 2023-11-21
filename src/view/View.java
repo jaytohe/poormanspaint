@@ -120,19 +120,27 @@ public class View implements PropertyChangeListener {
 
         //File menu that allows export as JPG or exiting.
         JMenu fileMenu = new JMenu ("File");
-        JMenuItem exportItem = new JMenuItem ("Export");
-        fileMenu.add(exportItem);
+        JMenuItem exportItem = new JMenuItem ("Export");        
         JMenuItem exitItem = new JMenuItem ("Exit");
-        fileMenu.add(exitItem);
 
-        //Help Menu that allows user to open About dialog.
-        JMenu helpMenu = new JMenu ("Help");
-        JMenuItem aboutItem = new JMenuItem ("About");
-        helpMenu.add(aboutItem);
+
+        //Set export button to open file dialog for export.
+        exportItem.addActionListener(e -> {
+            controller.showExportImageDialog(mainFrame);
+        });
+
+        //Set exit button to clear all shapes and exit the program.
+        exitItem.addActionListener(e -> {
+            controller.clearAllShapes();
+            System.exit(0);
+        });
+
+
+        fileMenu.add(exportItem);
+        fileMenu.add(exitItem);
 
         //Add both menus to menu bar
         menuBar.add(fileMenu);
-        menuBar.add(helpMenu);
 
         //Add menu to main frame
         mainFrame.setJMenuBar(menuBar);

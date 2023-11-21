@@ -11,7 +11,7 @@ import java.util.LinkedList;
 
 public class DrawingPanel extends JPanel {
 
-    private Controller controller;
+    private final Controller controller;
     //private ShapeType currentShapeType = ShapeType.LINE;
     private LinkedList<Shape> shapes; //pointer to the shapes array in Model.
     // this allows us to just keep one array in the model and update that.

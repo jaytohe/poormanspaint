@@ -2,8 +2,15 @@ package controller;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Component;
+import java.awt.FileDialog;
+import java.awt.Frame;
+import java.io.File;
 
 import javax.swing.JColorChooser;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 
 import model.Model;
 import model.ShapeType;
@@ -62,6 +69,28 @@ public class Controller {
             }
             model.setBorderColor(pickedColor);
         }
+    }
+
+
+    public void showExportImageDialog(Component parent) {
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        fileChooser.setDialogTitle("Export Image As");
+        fileChooser.setApproveButtonText("Export");
+        fileChooser.setApproveButtonToolTipText("Export the Image");
+        int returnVal = fileChooser.showSaveDialog(parent);
+
+        if (returnVal == JFileChooser.APPROVE_OPTION) {
+            File selectedFilePath = fileChooser.getSelectedFile();
+
+            try {
+                model.exportCanvasAsImage(selectedFilePath, parent.getWidth(), parent.getHeight());
+            }
+            catch (Exception e) {
+                JOptionPane.showMessageDialog(parent, "Error: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+
     }
 
     public void setBorderWidth(float width) {
