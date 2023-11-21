@@ -156,7 +156,7 @@ public class View implements PropertyChangeListener {
         lineButton = new JButton("Line");
         rectangleButton = new JButton("Rectangle");
         triangleButton = new JButton("Triangle");
-        ellipseButton = new JButton("Ellpise");
+        ellipseButton = new JButton("Ellipse");
 
 
         //Link to actionListener
