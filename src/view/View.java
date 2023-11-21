@@ -9,7 +9,10 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.concurrent.Flow;
 
+import javax.swing.JColorChooser;
+import java.awt.Color;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -21,6 +24,7 @@ import javax.swing.JSpinner;
 import javax.swing.JToolBar;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingUtilities;
+import javax.swing.border.Border;
 
 import controller.Controller;
 import model.Model;
@@ -38,7 +42,9 @@ public class View implements PropertyChangeListener {
     private JMenuBar menuBar;
     private JToolBar actionsToolbar; //Contains Undo, Redo and Select.
     private JToolBar selectOptionsToolbar; //Contains Rotation, Scale.
-    private JToolBar topToolbar;
+    private JToolBar topToolbar; // Contains shape selection buttons
+    private JToolBar colorSelectionToolbar; //contains pick color button and clear.
+    private JPanel topPanel;
     private JPanel bottomPanel;
 
 
@@ -50,6 +56,10 @@ public class View implements PropertyChangeListener {
     private JButton ellipseButton;
     private JButton selectedShapeButton;
 
+    //Declare color chooser toolbar buttons
+    private JButton pickColorButton;
+    private JButton clearButton;
+
     //Declare bottom toolbar buttons
     private JButton undoButton;
     private JButton redoButton;
@@ -58,6 +68,7 @@ public class View implements PropertyChangeListener {
     //Declare components of selectOptionsToolbar
     private JSpinner rotationSpinner;
     private JSpinner scalingSpinner;
+    private JSpinner lineWidthSpinner;
     
 
     private static final int FRAME_HEIGHT = 600;
@@ -73,11 +84,12 @@ public class View implements PropertyChangeListener {
         menuBar = new JMenuBar();
         drawingPanel = new DrawingPanel(controller);
 
-
+        topPanel = new JPanel(new BorderLayout());
         bottomPanel = new JPanel(new BorderLayout());
         actionsToolbar = new JToolBar();
         selectOptionsToolbar = new JToolBar();
         topToolbar = new JToolBar();
+        colorSelectionToolbar = new JToolBar();
 
         buildMainFrame();
         
@@ -131,15 +143,21 @@ public class View implements PropertyChangeListener {
         buildSelectOptionsToolbar();
         mainFrame.getContentPane().add(bottomPanel, BorderLayout.PAGE_END);
 
-        buildTopToolbar(); // contains choice of shape, color
-
+        buildTopToolbar(); // contains choice of shape to draw.
+        buildColorSelectToolbar();
+        mainFrame.getContentPane().add(topPanel, BorderLayout.PAGE_START);
     }
 
     private void buildTopToolbar() {
+
+        topToolbar.setLayout(new FlowLayout());
+        topToolbar.setOpaque(false);
+
         lineButton = new JButton("Line");
         rectangleButton = new JButton("Rectangle");
         triangleButton = new JButton("Triangle");
         ellipseButton = new JButton("Ellpise");
+
 
         //Link to actionListener
         lineButton.addActionListener(e -> {
@@ -169,23 +187,71 @@ public class View implements PropertyChangeListener {
         topToolbar.add(ellipseButton);
 
         topToolbar.setFloatable(false);
+        topToolbar.setRollover(true);
 
-        mainFrame.getContentPane().add(topToolbar, BorderLayout.PAGE_START);
+        //mainFrame.getContentPane().add(topToolbar, BorderLayout.PAGE_START);
+        topPanel.add(topToolbar, BorderLayout.LINE_START);
+        //topPanel.add(colorChooser, BorderLayout.LINE_END);
     
+    }
+
+    private void buildColorSelectToolbar() {
+
+        colorSelectionToolbar.setLayout(new FlowLayout());
+        colorSelectionToolbar.setOpaque(false);
+
+        //Spinner for setting the line thickness.
+        lineWidthSpinner = new JSpinner(new SpinnerNumberModel(1, 1, 5, 1));
+
+        //Button that opens the color picker dialog.
+        pickColorButton = new JButton("Pick Color");
+
+        // Button that clears everything drawn on the canvas as well as the undo and redo lists.
+        clearButton = new JButton("Clear");
+
+        //Set preferred size for spinner.
+        lineWidthSpinner.setPreferredSize(new Dimension(50, lineWidthSpinner.getPreferredSize().height));
+
+
+        lineWidthSpinner.addChangeListener(e -> {
+            controller.setBorderWidth(((Integer) lineWidthSpinner.getValue()).intValue());
+        });
+
+        pickColorButton.addActionListener(e -> {
+            controller.showColorChooser();
+        });
+        clearButton.addActionListener(e -> {
+            controller.clearAllShapes();
+        });
+
+
+        colorSelectionToolbar.add(new JLabel("Line Width:"));
+        colorSelectionToolbar.add(lineWidthSpinner);
+        colorSelectionToolbar.add(pickColorButton);
+        colorSelectionToolbar.add(clearButton);
+
+        //set toolbar options
+        colorSelectionToolbar.setFloatable(false);
+
+        //add toolbar to topPanel
+        topPanel.add(colorSelectionToolbar, BorderLayout.LINE_END);
     }
 
     private void buildSelectOptionsToolbar() {
 
         selectOptionsToolbar.setLayout(new FlowLayout());
+        selectOptionsToolbar.setOpaque(false);
 
         // Create a spinner that controls shape rotation (0 to 360 degrees).
         rotationSpinner = new JSpinner(new SpinnerNumberModel(0, 0, 360, 1));
         
         //Create a spinner that controls the scaling factor of the shape 0x to 4x in 0.1 increments.
         scalingSpinner = new JSpinner(new SpinnerNumberModel(1.0, 0.0, 4.0, 0.1));
+
+        //Create a spinner that controls the line width of the s
         
         // Set the preferred size of the spinners
-        rotationSpinner.setPreferredSize(new Dimension(50, rotationSpinner.getPreferredSize().height));//#endregion
+        rotationSpinner.setPreferredSize(new Dimension(50, rotationSpinner.getPreferredSize().height));
         scalingSpinner.setPreferredSize(new Dimension(50, scalingSpinner.getPreferredSize().height));
         
         rotationSpinner.addChangeListener(e -> {
@@ -205,7 +271,8 @@ public class View implements PropertyChangeListener {
         selectOptionsToolbar.add(scalingSpinner);
 
         selectOptionsToolbar.setFloatable(false);
-        selectOptionsToolbar.setVisible(true);
+        selectOptionsToolbar.setRollover(true);
+        selectOptionsToolbar.setVisible(false);
 
         bottomPanel.add(selectOptionsToolbar, BorderLayout.LINE_START);
     }
@@ -235,6 +302,7 @@ public class View implements PropertyChangeListener {
         actionsToolbar.add(redoButton);
 
         actionsToolbar.setFloatable(false);
+        actionsToolbar.setRollover(true);
 
         //Add toolbar to bottom panel and add that to main frame on bottom right.
         bottomPanel.add(actionsToolbar, BorderLayout.LINE_END);

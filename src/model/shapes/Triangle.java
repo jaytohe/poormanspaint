@@ -1,13 +1,13 @@
 package model.shapes;
 
+import java.awt.BasicStroke;
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.Point2D;
 
 public class Triangle extends Shape {
-    public Triangle(int startX, int startY, int endX, int endY) {
-        super(startX, startY, endX, endY);
-
-
+    public Triangle(int startX, int startY, int endX, int endY, Color borderColor, BasicStroke borderWidth) {
+        super(startX, startY, endX, endY, borderColor, borderWidth);
     }
 
     @Override
@@ -35,8 +35,8 @@ public class Triangle extends Shape {
         //int[] xPoints = {getStartX(), getEndX(), getStartX() + ((getEndX() - getStartX()) / 2)};
         //int[] yPoints = {getStartY(), getEndY(), getEndY()};
 
-        int[] xPoints = {getRotatedStartPoint().x, getRotatedEndPoint().x, getRotatedStartPoint().x + ((getRotatedEndPoint().x - getRotatedStartPoint().x) / 2)};
-        int[] yPoints = {getRotatedStartPoint().y, getRotatedEndPoint().y, getRotatedEndPoint().y};
+        int[] xPoints = {getStartPoint().x, getEndPoint().x, getStartPoint().x + ((getEndPoint().x - getStartPoint().x) / 2)};
+        int[] yPoints = {getStartPoint().y, getEndPoint().y, getEndPoint().y};
 
         // Calculate the area of the triangle using the given points
         double area = 0.5 * (-yPoints[1] * xPoints[2] + yPoints[0] * (-xPoints[1] + xPoints[2]) + xPoints[0] * (yPoints[1] - yPoints[2]) + xPoints[1] * yPoints[2]);

@@ -3,9 +3,12 @@ import model.shapes.Shape;
 import model.shapes.ShiftKeyModifiable;
 import model.shapes.Triangle;
 
+import java.awt.BasicStroke;
+import java.awt.Color;
 import java.awt.Point;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import java.util.Iterator;
 import java.util.LinkedList;
 
 import model.shapes.Ellipse;
@@ -23,9 +26,14 @@ public class Model {
     private Shape selectedShape = null;
     private boolean selectModeEnabled = false;
 
+    private Color borderColor;
+    private BasicStroke borderWidth;
+    
     public Model() {
         shapeType = ShapeType.LINE;
         oldShapeType = ShapeType.LINE;
+        borderColor = Color.BLACK;
+        borderWidth = new BasicStroke(1);
         shapes = new LinkedList<>();
         undoneShapes = new LinkedList<>();
         this.notifier = new PropertyChangeSupport(this);
@@ -45,8 +53,34 @@ public class Model {
         updateSelectedShape();
     }
 
+
+    public Color getBorderColor() {
+        return borderColor;
+    }
+
+    public void setBorderColor(Color borderColor) {
+        this.borderColor = borderColor;
+    }
+
+
+    public BasicStroke getBorderWidth() {
+        return borderWidth;
+    }
+
+    public void setBorderWidth(BasicStroke stroke) {
+        this.borderWidth = stroke;
+    }
+
     public LinkedList<Shape> getShapes() {
         return shapes;
+    }
+
+
+    public void clearAllShapes() {
+        shapes.clear();
+        undoneShapes.clear();
+        notifier.firePropertyChange("drawnShapes", null, shapes);
+        notifyUndoRedoStates();
     }
 
 
@@ -92,16 +126,15 @@ public class Model {
     /**
      * Finds a shape at the specified position.
      *
+     * In case where there are two overlapping shapes, the one that was drawn last is selected.
      * @param  x  the x-coordinate of the position
      * @param  y  the y-coordinate of the position
      */
     public void findShapeInPos(int x, int y) {
-        if (!shapes.isEmpty()) {
-            for (Shape shape : shapes) {
-                if (shape.contains(x, y)) {
-                    this.selectedShape = shape;
-                    break;
-                }
+        for (Shape shape: shapes) {
+            if (shape.contains(x, y)) {
+                this.selectedShape = shape;
+                break;
             }
         }
     }
@@ -141,20 +174,36 @@ public class Model {
         }
     }
 
+    public void colorSelectedShape(Color borderColor) {
+        if (selectedShape != null) {
+            selectedShape.setBorderColor(borderColor);
+            // Notify the view to redraw the shapes
+            notifier.firePropertyChange("drawnShapes", null, shapes);
+        }
+    }
+
+    public void strokeSelectedShape(BasicStroke stroke) {
+        if (selectedShape != null) {
+            selectedShape.setBorderWidth(stroke);
+            // Notify the view to redraw the shapes
+            notifier.firePropertyChange("drawnShapes", null, shapes);
+        }
+    }
+
     public void drawShape(int startX, int startY, int endX, int endY, boolean SHIFTKeyDown) {
         
         switch(shapeType) {
             case LINE:
-                shapes.push(new Line(startX, startY, endX, endY));
+                shapes.push(new Line(startX, startY, endX, endY, borderColor, borderWidth));
                 break;
             case RECTANGLE:
-                shapes.push(new Rectangle(startX, startY, endX, endY, SHIFTKeyDown));
+                shapes.push(new Rectangle(startX, startY, endX, endY, borderColor, borderWidth, SHIFTKeyDown));
                 break;
             case TRIANGLE:
-                shapes.push(new Triangle(startX, startY, endX, endY));
+                shapes.push(new Triangle(startX, startY, endX, endY, borderColor, borderWidth));
                 break;
             case ELLIPSE:
-                shapes.push(new Ellipse(startX, startY, endX, endY, SHIFTKeyDown));
+                shapes.push(new Ellipse(startX, startY, endX, endY, borderColor, borderWidth, SHIFTKeyDown));
                 break;
         }
         

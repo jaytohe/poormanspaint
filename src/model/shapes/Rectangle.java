@@ -1,5 +1,7 @@
 package model.shapes;
 
+import java.awt.BasicStroke;
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.geom.Point2D;
@@ -9,8 +11,8 @@ public class Rectangle extends Shape implements ShiftKeyModifiable {
 
     private boolean drawSquare;
 
-    public Rectangle(int startX, int startY, int endX, int endY, boolean drawSquare) {
-        super(startX, startY, endX, endY);
+    public Rectangle(int startX, int startY, int endX, int endY, Color borderColor, BasicStroke borderWidth, boolean drawSquare) {
+        super(startX, startY, endX, endY, borderColor, borderWidth);
         this.drawSquare = drawSquare;
     }
 

@@ -1,5 +1,10 @@
 package controller;
 
+import java.awt.BasicStroke;
+import java.awt.Color;
+
+import javax.swing.JColorChooser;
+
 import model.Model;
 import model.ShapeType;
 
@@ -11,7 +16,6 @@ public class Controller {
     private int startX, startY;
 
     private boolean newShape = true;
-    //private boolean selectMode = false;
 
     private boolean SHIFTKeyDown = false;
 
@@ -46,6 +50,30 @@ public class Controller {
 
     public void setSHIFTKeyState(boolean state) {
         SHIFTKeyDown = state;
+    }
+
+
+    public void showColorChooser() {
+        Color pickedColor = JColorChooser.showDialog(null, "Choose Color", model.getBorderColor());
+
+        if (pickedColor != null) {
+            if (model.isSelectModeEnabled()) {
+                model.colorSelectedShape(pickedColor);
+            }
+            model.setBorderColor(pickedColor);
+        }
+    }
+
+    public void setBorderWidth(float width) {
+
+        if (model.isSelectModeEnabled()) {
+            model.strokeSelectedShape(new BasicStroke(width));
+        }
+        model.setBorderWidth(new BasicStroke(width));
+    }
+
+    public void clearAllShapes() {
+        model.clearAllShapes();
     }
 
     public void handleMousePressed(int x, int y) {

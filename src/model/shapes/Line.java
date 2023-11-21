@@ -1,13 +1,15 @@
 package model.shapes;
 
+import java.awt.BasicStroke;
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.geom.Point2D;
 
 public class Line extends Shape {
     
-    public Line(int startX, int startY, int endX, int endY) {
-        super(startX, startY, endX, endY);
+    public Line(int startX, int startY, int endX, int endY, Color borderColor, BasicStroke borderWidth) {
+        super(startX, startY, endX, endY, borderColor, borderWidth);
     }
 
     /**
@@ -40,11 +42,13 @@ public class Line extends Shape {
         // Calculate the expected y value for the passed in point's x value
         double expectedY = slope * x + yIntercept;
 
+        float lineWidth = borderWidth.getLineWidth();
 
         // Ideally we would just check if exceptedY == y.
-        // But because of rounding/precision error, we give an uncertainty of 1 unit
-        // to the difference between expectedY and y
-        if (Math.abs(y - expectedY) <= 1.5) {
+        // But because of rounding/precision error and the fact that the user may  have picked a different line width
+        // we give an uncertainty of lineWidth (default: 1) + 0.5 units in either direction
+        // to the difference between expectedY and y.
+        if (Math.abs(y - expectedY) <= lineWidth + 0.5) {
             // Check if the x value is within the bounds of the line
             if (x >= Math.min(startX, endX) && x <= Math.max(startX, endX)) {
                 return true;
@@ -55,33 +59,44 @@ public class Line extends Shape {
     }
 
 
-    /*
-    protected void scale() {
-        Point2D midpoint = getCentroid();
 
-        double xDiff = midpoint.getX() - getStartPoint().getX();
-        double yDiff = midpoint.getY() - getStartPoint().getY();
+    protected Point getRotatedStartPoint() {
+        // Calculate the midpoint of the line
+        double midpointX = (startPoint.getX() + getScaledEndPoint().getX()) / 2;
+        double midpointY = (startPoint.getY() + getScaledEndPoint().getY()) / 2;
+    
+        // Calculate the distance from the midpoint to the end point
+        double distance = Math.sqrt(Math.pow(startPoint.getX() - midpointX, 2) + Math.pow(startPoint.getY() - midpointY, 2));
+    
+        // Calculate the angle between the line and the x-axis
+        double angle = Math.atan2(startPoint.getY() - midpointY, startPoint.getX() - midpointX);
+    
+        // Apply the rotation transformation to the end point
+        double rotatedStartX = midpointX + distance * Math.cos(angle + rotationAngle);
+        double rotatedStartY = midpointY + distance * Math.sin(angle + rotationAngle);
+    
+        return new Point((int) rotatedStartX, (int) rotatedStartY);
+    }
 
-        scaledStartPoint = new Point((int) (midpoint.getX() - xDiff * scaleFactor), (int) (midpoint.getY() - yDiff * scaleFactor));
-        
-        xDiff = midpoint.getX() - getEndPoint().getX();
-        yDiff = midpoint.getY() - getEndPoint().getY();
+    protected Point getRotatedEndPoint() {
+        // Calculate the midpoint of the line
+        double midpointX = (startPoint.getX() + getScaledEndPoint().getX()) / 2;
+        double midpointY = (startPoint.getY() + getScaledEndPoint().getY()) / 2;
+    
+        // Calculate the distance from the midpoint to the end point
 
-        scaledEndPoint = new Point((int) (midpoint.getX() - xDiff * scaleFactor), (int) (midpoint.getY() - yDiff * scaleFactor));
-    }*/
-
-
-    /*
-    protected Point2D getCentroid() {
-        //Midpoint of the x axis
-        double midpointX = (getMinScaledX() + getMaxScaledX()) /2;
-        
-        //Midpoint of the y axis
-        double midpointY = (getMinScaledY() + getMaxScaledY()) /2;
-        
-        return new Point2D.Double(midpointX, midpointY);
-    }*/
-
+        double distance = endPoint.distanceSq(midpointX, midpointY);
+        //double distance = Math.sqrt(Math.pow(endPoint.getX() - midpointX, 2) + Math.pow(endPoint.getY() - midpointY, 2));
+    
+        // Calculate the angle between the line and the x-axis
+        double angle = Math.atan2(endPoint.getY() - midpointY, endPoint.getX() - midpointX);
+    
+        // Apply the rotation transformation to the end point
+        double rotatedEndX = midpointX + distance * Math.cos(angle + rotationAngle);
+        double rotatedEndY = midpointY + distance * Math.sin(angle + rotationAngle);
+    
+        return new Point((int) rotatedEndX, (int) rotatedEndY);
+    }
     protected Point2D getCentroid() {
         //Midpoint of the x axis
         double midpointX = (startPoint.x + getScaledEndPoint().x) / 2;
