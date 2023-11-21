@@ -216,7 +216,7 @@ public class View implements PropertyChangeListener {
         });
 
         pickColorButton.addActionListener(e -> {
-            controller.showColorChooser();
+            controller.showColorChooser(mainFrame);
         });
         clearButton.addActionListener(e -> {
             controller.clearAllShapes();

@@ -57,8 +57,8 @@ public class Controller {
     }
 
 
-    public void showColorChooser() {
-        Color pickedColor = JColorChooser.showDialog(null, "Choose Color", model.getBorderColor());
+    public void showColorChooser(Component parent) {
+        Color pickedColor = JColorChooser.showDialog(parent, "Choose Color", model.getBorderColor());
 
         if (pickedColor != null) {
             if (model.isSelectModeEnabled()) {
