@@ -55,12 +55,25 @@ public class Rectangle extends Shape implements ShiftKeyModifiable {
         //double midpointX = (getMinScaledX() + getMaxScaledX()) /2;
         //double midpointX = (getWidth()) / 2 + getMinX();
 
-        double midpointX = (startPoint.x + getScaledEndPoint().x) / 2;
+        int width = getWidth();
+        int height = getHeight();
+
+        if (drawSquare) {
+            height = width = Math.max(width, height);
+        } 
+
+        //double midPointX = (startPoint.x + getScaledEndPoint().x) / 2;
+        //double midPointY = (startPoint.y + getScaledEndPoint().y) / 2;
+
+        //Midpoint of the x axis
+        double midPointX = getTopLeftPoint().x + width / 2;
+
         //Midpoint of the y axis
-        //double midpointY = (getMinScaledY() + getMaxScaledY()) /2;
-        //double midpointY = (getHeight()) /2 + getMinY();
-        double midpointY = (startPoint.y + getScaledEndPoint().y) / 2;
-        return new Point2D.Double(midpointX, midpointY);
+        double midPointY = getTopLeftPoint().y + height / 2;
+
+        
+        //Midpoint of the y axis
+        return new Point2D.Double(midPointX, midPointY);
     }
 
     public void draw(Graphics2D g) {
