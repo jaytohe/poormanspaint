@@ -97,6 +97,9 @@ public class Rectangle extends Shape implements ShiftKeyModifiable {
         }
     }
 
+    public Shape clone() {
+        return new Rectangle(startPoint.x, startPoint.y, endPoint.x, endPoint.y, borderColor, borderWidth, drawSquare);
+    }
 
     /* @Override
     protected void scale() {

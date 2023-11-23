@@ -113,4 +113,8 @@ public class Line extends Shape {
             g.setTransform(beforeRotation);
         }
     }
+
+    public Shape clone() {
+        return new Line(startPoint.x, startPoint.y, endPoint.x, endPoint.y, borderColor, borderWidth);
+    }
 }

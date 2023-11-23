@@ -28,7 +28,6 @@ public abstract class Shape {
         this.endPoint = new Point(endX, endY);
     }
 
-
     public Point getStartPoint() {
         return startPoint;
     }
@@ -104,6 +103,10 @@ public abstract class Shape {
             scaleFactor = factor;
         }
     }
+
+    public double getScaleFactor() {
+        return scaleFactor;
+    }
     
     public Point getScaledEndPoint() {
         double newEndPointX = ((endPoint.getX() - startPoint.getX())*scaleFactor) + startPoint.getX();
@@ -144,4 +147,5 @@ public abstract class Shape {
 
     protected abstract Point2D getCentroid();
     public abstract boolean contains(int x, int y);
+    public abstract Shape clone();
 }

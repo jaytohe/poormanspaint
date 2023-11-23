@@ -7,19 +7,20 @@ import model.ShapeType;
 import model.shapes.Shape;
 import java.awt.*;
 import java.awt.event.*;
-import java.util.LinkedList;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DrawingPanel extends JPanel {
 
     private final Controller controller;
     //private ShapeType currentShapeType = ShapeType.LINE;
-    private LinkedList<Shape> shapes; //pointer to the shapes array in Model.
+    private List<Shape> shapes; //pointer to the shapes array in Model.
     // this allows us to just keep one array in the model and update that.
 
     public DrawingPanel(Controller controller) {
         this.controller = controller;
 
-        this.shapes = new LinkedList<>();
+        this.shapes = new ArrayList<>();
         setBorder(BorderFactory.createLineBorder(Color.black));
         setFocusable(true); // Allow the panel to get focus
 
@@ -78,7 +79,7 @@ public class DrawingPanel extends JPanel {
         }
     }
 
-    public void updateShapesPointer(LinkedList<Shape> shapes) {
+    public void updateShapesPointer(List<Shape> shapes) {
         this.shapes = shapes;
         revalidate();
         repaint();

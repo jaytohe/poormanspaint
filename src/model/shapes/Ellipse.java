@@ -100,5 +100,9 @@ public class Ellipse extends Shape implements ShiftKeyModifiable {
         double midpointY = (startPoint.y + getScaledEndPoint().y) / 2;
         return new Point2D.Double(midpointX, midpointY);
     }
+
+    public Shape clone() {
+        return new Ellipse(startPoint.x, startPoint.y, endPoint.x, endPoint.y, borderColor, borderWidth, drawCircle);
+    }
     
 }

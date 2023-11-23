@@ -64,4 +64,8 @@ public class Triangle extends Shape {
         return new Point2D.Double((xPoints[0] + xPoints[1] + xPoints[2]) / 3, (yPoints[0] + yPoints[1] + yPoints[2]) / 3);
     }
 
+    public Shape clone() {
+        return new Triangle(startPoint.x, startPoint.y, endPoint.x, endPoint.y, borderColor, borderWidth);
+    }
+
 }

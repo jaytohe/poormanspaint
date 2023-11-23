@@ -1,7 +1,7 @@
 package model;
 
 import model.shapes.Shape;
-import java.util.LinkedList;
+import java.util.List;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
@@ -11,7 +11,7 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 
 public class ImageExporter {
-    public static void exportShapesToImage(LinkedList<Shape> shapes, File selectedFilePath, int width, int height) 
+    public static void exportShapesToImage(List<Shape> shapes, File selectedFilePath, int width, int height) 
     throws IOException, IllegalArgumentException {
         BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
         Graphics2D g2d = image.createGraphics();

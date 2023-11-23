@@ -5,6 +5,8 @@ import java.awt.FlowLayout;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.LinkedList;
+import java.util.List;
+
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -333,7 +335,7 @@ public class View implements PropertyChangeListener {
                 break;
             
             case "drawnShapes":
-                final LinkedList<Shape> shapes = (LinkedList<Shape>) event.getNewValue();
+                final List<Shape> shapes = (List<Shape>) event.getNewValue();
                 drawingPanel.updateShapesPointer(shapes);
                 break;
                 
