@@ -144,7 +144,6 @@ public abstract class Shape {
         g.setStroke(borderWidth);
         rotate(g);
     }
-
     protected abstract Point2D getCentroid();
     public abstract boolean contains(int x, int y);
     public abstract Shape clone();

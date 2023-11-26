@@ -3,7 +3,6 @@ package view;
 import javax.swing.*;
 
 import controller.Controller;
-import model.ShapeType;
 import model.shapes.Shape;
 import java.awt.*;
 import java.awt.event.*;
@@ -84,41 +83,5 @@ public class DrawingPanel extends JPanel {
         revalidate();
         repaint();
     }
-
-    //public void setCurrentShapeType(ShapeType shapeType) {
-    //    this.currentShapeType = shapeType;
-    //}
-
-    
-    /*
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            JFrame frame = new JFrame();
-            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            frame.setSize(400, 400);
-            DrawingPanel drawingPanel = new DrawingPanel();
-            frame.add(drawingPanel);
-
-            JButton lineButton = new JButton("Line");
-            lineButton.addActionListener(e -> drawingPanel.setCurrentShapeType(ShapeType.LINE));
-
-            JButton rectangleButton = new JButton("Rectangle");
-            rectangleButton.addActionListener(e -> drawingPanel.setCurrentShapeType(ShapeType.RECTANGLE));
-
-            JButton ovalButton = new JButton("Oval");
-            ovalButton.addActionListener(e -> drawingPanel.setCurrentShapeType(ShapeType.OVAL));
-
-            JPanel buttonPanel = new JPanel();
-            buttonPanel.add(lineButton);
-            buttonPanel.add(rectangleButton);
-            buttonPanel.add(ovalButton);
-            frame.add(buttonPanel, BorderLayout.PAGE_START);
-
-            frame.setVisible(true);
-        });
-    }
-    */
-
-
 
 }

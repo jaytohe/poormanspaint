@@ -171,8 +171,6 @@ public class Model {
             Shape lastShape = getShapes().get(getShapes().size() - 1);
 
             lastShape.setEndPoint(new Point(x, y));
-            //lastShape.setEndX(x);
-            //lastShape.setEndY(y);
 
             if (lastShape instanceof ShiftKeyModifiable) {
                 ((ShiftKeyModifiable) lastShape).setSHIFTKeyState(SHIFTKeyDown);
@@ -270,13 +268,6 @@ public class Model {
                 break;
         }
         
-        // Clear the stacks holding undone shapes when a new shape is drawn (That's how MSPaint works)
-        //if (!undoneShapes.isEmpty()) {
-        //    undoneShapes.clear();
-        //}
-        //if (currentDrawingPanelStatePosition < drawingPanelStates.size() - 1) {
-       //     drawingPanelStates.subList(0, currentDrawingPanelStatePosition+1).clear();
-        //}
 
         notifier.firePropertyChange("drawnShapes", null, currentDrawingPanelState);
         notifyUndoRedoStates();
