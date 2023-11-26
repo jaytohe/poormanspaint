@@ -91,31 +91,47 @@ public class Model {
         currentDrawingPanelState = drawingPanelStates.get(currentDrawingPanelStatePosition);
     }
 
-
-    private void createNewDrawningPanelState() {
-        List<Shape> currentState = currentDrawingPanelState;
-        if (drawingPanelStates.size() > currentDrawingPanelStatePosition) {
-            drawingPanelStates.subList(currentDrawingPanelStatePosition+1, drawingPanelStates.size()).clear();
-        }
-        drawingPanelStates.add(currentDrawingPanelStatePosition+1, new ArrayList<Shape>()); //if the user has clicked undo and draws smth new, this will overwrite the old state.
+    private void updateCurrentDrawingPanelState(List<Shape> state) {
+        drawingPanelStates.add(state);
         currentDrawingPanelStatePosition +=1;
-        //Clone the currentState to the new state
+        currentDrawingPanelState = drawingPanelStates.get(currentDrawingPanelStatePosition);
+    }
+
+
+    private List<Shape> cloneDrawingPanelState() {
+        List<Shape> currentState = currentDrawingPanelState;
+        List<Shape> clonedState = new ArrayList<Shape>();
+
         for (int i=0; i<currentState.size(); i++) {
             Shape shape = currentState.get(i);
-            drawingPanelStates.get(currentDrawingPanelStatePosition).add(shape.clone());
-            Shape clonedShape = drawingPanelStates.get(currentDrawingPanelStatePosition).get(i);
+            Shape clonedShape = shape.clone();
             clonedShape.setBorderWidth(shape.getBorderWidth());
             clonedShape.setBorderColor(shape.getBorderColor());
             clonedShape.setRotationAngle((int) Math.toDegrees(shape.getRotationAngle())); //temporary solution
             clonedShape.setScaleFactor(shape.getScaleFactor());
+            clonedState.add(clonedShape);
         }
-        //return drawingPanelStates.get(currentDrawingPanelStatePosition);
+        return clonedState;
+    }
+
+    private void createNewDrawningPanelState() {
+        if (drawingPanelStates.size() > currentDrawingPanelStatePosition) { //if the user has clicked undo and draws smth new, this will overwrite the old state.
+            drawingPanelStates.subList(currentDrawingPanelStatePosition+1, drawingPanelStates.size()).clear();
+        }
+        //drawingPanelStates.add(currentDrawingPanelStatePosition+1, cloneDrawingPanelState());
+        drawingPanelStates.add(cloneDrawingPanelState());
+        currentDrawingPanelStatePosition +=1;
+        //Clone the currentState to the new state
         updateCurrentDrawingPanelState();
     }
 
     public void clearAllShapes() {
         //shapes.clear();
         getShapes().clear();
+        drawingPanelStates.clear();
+        drawingPanelStates.add(new ArrayList<>());
+        currentDrawingPanelStatePosition = 0;
+        currentDrawingPanelState = drawingPanelStates.get(currentDrawingPanelStatePosition);
         //undoneShapes.clear();
         notifier.firePropertyChange("drawnShapes", null, getShapes());
         notifyUndoRedoStates();
@@ -123,7 +139,7 @@ public class Model {
 
 
     private void notifyUndoRedoStates() {
-        notifier.firePropertyChange("undoBtnState", drawingPanelStates.isEmpty(), !drawingPanelStates.isEmpty());
+        notifier.firePropertyChange("undoBtnState", currentDrawingPanelStatePosition == 0, currentDrawingPanelStatePosition != 0);
         //notifier.firePropertyChange("redoBtnState", undoneShapes.isEmpty(), !undoneShapes.isEmpty());
         notifier.firePropertyChange("redoBtnState", (currentDrawingPanelStatePosition == drawingPanelStates.size() - 1), currentDrawingPanelStatePosition != drawingPanelStates.size() - 1);
     }
@@ -175,10 +191,11 @@ public class Model {
      * @param  y  the y-coordinate of the position
      */
     public void findShapeInPos(int x, int y) {
-        createNewDrawningPanelState();
-        for (Shape shape: currentDrawingPanelState) {
+        List<Shape> clonedState = cloneDrawingPanelState();
+        for (Shape shape: clonedState) {
             if (shape.contains(x, y)) {
                 this.selectedShape = shape;
+                updateCurrentDrawingPanelState(clonedState);
                 break;
             }
         }
