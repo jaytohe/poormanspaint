@@ -1,3 +1,17 @@
+## How to compile and run
+
+From the parent directory run:
+
+`javac -cp 'lib/junit-4.13.2.jar:.' -d bin/ $(find src/ -name '*.java')`
+
+then go into the bin directory:
+
+`cd bin`
+
+and run the Main class with :
+
+`java Main`
+
 ## Getting Started
 
 Welcome to the VS Code Java world. Here is a guideline to help you get started to write Java code in Visual Studio Code.
