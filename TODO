@@ -1,0 +1,5 @@
+- Find a way to change "Folder name" to "File name" in JFileChooser and prevent it from overriding it with the selected folder.
+
+- Fix incorrect shape contains/mouse detection logic if a shape is rotated. This is currently working correctly only for lines.
+
+- Impl network json part.
