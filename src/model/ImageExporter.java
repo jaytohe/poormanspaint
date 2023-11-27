@@ -10,6 +10,10 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
+
+/**
+ * The ImageExporter utility class provides functionality to export a list of shapes to an image file.
+ */
 public class ImageExporter {
     public static void exportShapesToImage(List<Shape> shapes, File selectedFilePath, int width, int height) 
     throws IOException, IllegalArgumentException {
@@ -20,6 +24,7 @@ public class ImageExporter {
         //BEFORE any shapes are drawn on it.
         // This is to ensure that the image is non-transparent
         // and the shapes drawn on it can actually be seen.
+        // (unless the user picks the white color in the color chooser dialog...Oh well)
         g2d.setColor(Color.WHITE);
         g2d.fillRect(0, 0, width, height);
 
@@ -33,7 +38,7 @@ public class ImageExporter {
         ImageIO.write(image, "JPEG", selectedFilePath);
         System.out.println("Image exported successfully.");
 
-        // Flush the Graphics2D Export Canvas
+        // Flush the g2d object to release resources.
         g2d.dispose();
 
     }
