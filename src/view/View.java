@@ -1,5 +1,6 @@
 package view;
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.beans.PropertyChangeEvent;
@@ -29,14 +30,14 @@ public class View implements PropertyChangeListener {
     private Model model;
 
     private JFrame mainFrame;
-    private DrawingPanel drawingPanel;
+    private DrawingPanel drawingPanel; //Custom JPanel that allows us to draw shapes on it.
     private JMenuBar menuBar;
     private JToolBar actionsToolbar; //Contains Undo, Redo and Select.
     private JToolBar selectOptionsToolbar; //Contains Rotation, Scale.
-    private JToolBar topToolbar; // Contains shape selection buttons
+    private JToolBar shapeSelectionToolbar; // Contains shape selection buttons
     private JToolBar colorSelectionToolbar; //contains pick color button and clear.
-    private JPanel topPanel;
-    private JPanel bottomPanel;
+    private JPanel topPanel; // contains the shape-selection and color selection toolbars.
+    private JPanel bottomPanel; // contains the select-options toolbar (far left) and actionToolbar (far right).
 
 
     //Declare top toolbar buttons;
@@ -62,6 +63,7 @@ public class View implements PropertyChangeListener {
     private JSpinner lineWidthSpinner;
     
 
+    //Set the preferred size for the main frame.
     private static final int FRAME_HEIGHT = 600;
     private static final int FRAME_WIDTH = 800;
 
@@ -79,7 +81,7 @@ public class View implements PropertyChangeListener {
         bottomPanel = new JPanel(new BorderLayout());
         actionsToolbar = new JToolBar();
         selectOptionsToolbar = new JToolBar();
-        topToolbar = new JToolBar();
+        shapeSelectionToolbar = new JToolBar();
         colorSelectionToolbar = new JToolBar();
 
         buildMainFrame();
@@ -87,25 +89,29 @@ public class View implements PropertyChangeListener {
     }
 
 
+    /**
+     * Builds/Populates all the components of the main frame.
+     *
+     * @param  None
+     * @return None
+     */
     private void buildMainFrame() {
-
-        //JLabel yellowLabel = new JLabel();
-        //yellowLabel.setOpaque(true);
-        //yellowLabel.setBackground(new Color(248, 213, 131));
         buildMenuBar();
         buildToolbars();
-        mainFrame.getContentPane().add(drawingPanel, BorderLayout.CENTER);
+        mainFrame.getContentPane().add(drawingPanel, BorderLayout.CENTER); //append the drawing panel to the centre of frame's content pane,
         mainFrame.setPreferredSize(new Dimension(FRAME_WIDTH, FRAME_HEIGHT));
         mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         mainFrame.setTitle("Poor Man's MSPaint v1.0");
         mainFrame.pack();
         mainFrame.setVisible(true);
-        model.addListener(this);
+        model.addListener(this); //make this view a propertychange listener of the model. Allows us to respond to changes in the model.
     }
 
     /**
      * Builds the menu bar for the main frame of the Java application.
-     *
+     * 
+     * @param  None
+     * @return None
      */
     private void buildMenuBar() {
 
@@ -137,28 +143,39 @@ public class View implements PropertyChangeListener {
         mainFrame.setJMenuBar(menuBar);
     }
 
+    /**
+     * Builds the toolbars for the main frame of the Java application.
+     * Specifically calls the build methods for each toolbar.
+     *
+     * @param  None     No input parameters.
+     * @return None     No return value.
+     */
     private void buildToolbars() {
-        buildactionsToolbar(); // contains undo, redo.
-        buildSelectOptionsToolbar();
+        buildActionsToolbar(); // contains undo, redo.
+        buildSelectOptionsToolbar(); //contains rotate and scale options.
         mainFrame.getContentPane().add(bottomPanel, BorderLayout.PAGE_END);
 
-        buildTopToolbar(); // contains choice of shape to draw.
+        buildShapeSelectionToolbar(); // contains choice of shape to draw.
         buildColorSelectToolbar();
         mainFrame.getContentPane().add(topPanel, BorderLayout.PAGE_START);
     }
 
-    private void buildTopToolbar() {
+    /**
+     * Builds the toolbar that contains buttons that allow the user to select the shape to draw.
+     */
+    private void buildShapeSelectionToolbar() {
 
-        topToolbar.setLayout(new FlowLayout());
-        topToolbar.setOpaque(false);
+        shapeSelectionToolbar.setLayout(new FlowLayout()); //set layout to flowlayout so that buttons have some space between them.
+        shapeSelectionToolbar.setOpaque(false); //set background to transparent; makes it fitter with the design.
 
+        //Instantiate shape selection buttons.
         lineButton = new JButton("Line");
         rectangleButton = new JButton("Rectangle");
         triangleButton = new JButton("Triangle");
         ellipseButton = new JButton("Ellipse");
 
 
-        //Link to actionListener
+        //Make each button update the shape type that is selected in the model.
         lineButton.addActionListener(e -> {
             controller.setShapeType(ShapeType.LINE);
         });
@@ -170,55 +187,72 @@ public class View implements PropertyChangeListener {
         });
         ellipseButton.addActionListener(e -> {
             controller.setShapeType(ShapeType.ELLIPSE);
-            //drawingPanel.requestFocus(); //request focus so we can listen for SHIFT key.
         });
 
 
         // Select the lineButton by default
         selectedShapeButton = lineButton;
         selectedShapeButton.setSelected(true);
+        selectedShapeButton.setBackground(Color.LIGHT_GRAY); //set background to gray because setSelected is tough to see.
 
 
-        // Add shape button to top toolbar
-        topToolbar.add(lineButton);
-        topToolbar.add(rectangleButton);
-        topToolbar.add(triangleButton);
-        topToolbar.add(ellipseButton);
+        // Append each shapeButton to the shapeSelectionToolbar
+        shapeSelectionToolbar.add(lineButton);
+        shapeSelectionToolbar.add(rectangleButton);
+        shapeSelectionToolbar.add(triangleButton);
+        shapeSelectionToolbar.add(ellipseButton);
+        shapeSelectionToolbar.setFloatable(false);
+        shapeSelectionToolbar.setRollover(true);
 
-        topToolbar.setFloatable(false);
-        topToolbar.setRollover(true);
-
-        //mainFrame.getContentPane().add(topToolbar, BorderLayout.PAGE_START);
-        topPanel.add(topToolbar, BorderLayout.LINE_START);
-        //topPanel.add(colorChooser, BorderLayout.LINE_END);
+        topPanel.add(shapeSelectionToolbar, BorderLayout.LINE_START); //append the toolbar to the far left of the top panel.
     
     }
 
+    /**
+     * Builds the color selection toolbar that contains the "pick color" button and "Clear".
+     * 
+     * The pick color button opens up a dialog that allows the user to select the color of the shape to draw.
+     * 
+     * The picked color will also change the color of a _selected_ shape.
+     * 
+     * The clear button resets the canvas and the undo/redo state.
+     *
+     * @param  None   This function does not take any parameters.
+     * @return        This function does not return any value.
+     */
     private void buildColorSelectToolbar() {
 
         colorSelectionToolbar.setLayout(new FlowLayout());
         colorSelectionToolbar.setOpaque(false);
 
         //Spinner for setting the line thickness.
+        // We allow the user to set a line thickness of up to 5 pixels.
+        // This is clearly a design choice and can be changed later.
         lineWidthSpinner = new JSpinner(new SpinnerNumberModel(1, 1, 5, 1));
 
         //Button that opens the color picker dialog.
         pickColorButton = new JButton("Pick Color");
 
-        // Button that clears everything drawn on the canvas as well as the undo and redo lists.
+        // Button that clears everything drawn on the canvas as well as the undo and redo state.
         clearButton = new JButton("Clear");
 
         //Set preferred size for spinner.
         lineWidthSpinner.setPreferredSize(new Dimension(50, lineWidthSpinner.getPreferredSize().height));
 
 
+        //Add change listener to the spinner that updates the line thickness in the model.
         lineWidthSpinner.addChangeListener(e -> {
             controller.setBorderWidth(((Integer) lineWidthSpinner.getValue()).intValue());
         });
 
+        //Add action listener to the pick color button which fires up the color selection dialog.
+        // The mainFrame is passed in as a root parent to center the dialog in the frame.
         pickColorButton.addActionListener(e -> {
             controller.showColorChooser(mainFrame);
         });
+
+
+        //Add action listener to the clear button which resets the canvas and the undo/redo state.
         clearButton.addActionListener(e -> {
             controller.clearAllShapes();
         });
@@ -236,6 +270,22 @@ public class View implements PropertyChangeListener {
         topPanel.add(colorSelectionToolbar, BorderLayout.LINE_END);
     }
 
+
+    
+
+    /**
+     * Builds the select options toolbar that contains Rotation and Scale spinners.
+     * 
+     * The Rotation spinner takes in degrees as input and changes the rotation of the selected shape.
+     * 
+     * The Scale spinner takes in a decimal as input and changes the scale of the selected shape.
+     * 
+     * Both rotation and scale _should_ happen relative to the centroid of the shape. In the case of the line,
+     * the centroid is considered the middle point of the line.
+     *
+     * @param  None
+     * @return None
+     */
     private void buildSelectOptionsToolbar() {
 
         selectOptionsToolbar.setLayout(new FlowLayout());
@@ -253,13 +303,14 @@ public class View implements PropertyChangeListener {
         rotationSpinner.setPreferredSize(new Dimension(50, rotationSpinner.getPreferredSize().height));
         scalingSpinner.setPreferredSize(new Dimension(50, scalingSpinner.getPreferredSize().height));
         
+
+        //Add change listener to the spinner that updates the rotation of the selected shape in the model.
         rotationSpinner.addChangeListener(e -> {
-            //System.out.println("Rotation changed to: " + rotationSpinner.getValue());
             controller.rotateSelectedShape(((Integer) rotationSpinner.getValue()).intValue());
         });
 
+        //Add change listener to the spinner that updates the scale of the selected shape in the model.
         scalingSpinner.addChangeListener(e -> {
-            //System.out.println("Scaling changed to: " + scalingSpinner.getValue());
             controller.scaleSelectedShape(((Double) scalingSpinner.getValue()).doubleValue());
         });
 
@@ -273,17 +324,17 @@ public class View implements PropertyChangeListener {
         selectOptionsToolbar.setRollover(true);
         selectOptionsToolbar.setVisible(false);
 
-        bottomPanel.add(selectOptionsToolbar, BorderLayout.LINE_START);
+        bottomPanel.add(selectOptionsToolbar, BorderLayout.LINE_START); // Add toolbar to the far left side of the bottom panel
     }
 
-    private void buildactionsToolbar() {
+    private void buildActionsToolbar() {
 
         //Create buttons
         undoButton = new JButton("Undo");
         redoButton = new JButton("Redo");
         selectButton = new JButton("Select Mode: Off");
 
-        //Default state of undoButton and redoButton
+        //Default state of undoButton and redoButton is disabled.
         undoButton.setEnabled(false);
         redoButton.setEnabled(false);
 
@@ -317,8 +368,12 @@ public class View implements PropertyChangeListener {
      * We encapsulate the action to be performed on the UI thread in a Runnable
      * object that is ran safely using SwingUtils.invokeLater().
      * 
+     * If the case involves a change in DrawingPanel, for instance the model says a new shape is to be drawn,
+     * then that action is NOT performed with invokeLater as DrawingPanel has its own thread.
+     * 
      * @param event the property change event
      */
+    //@SuppressWarnings("unchecked")
     public void propertyChange(PropertyChangeEvent event) {
 
         Runnable uiAction = null; // The action to be performed on the UI thread
@@ -367,9 +422,15 @@ public class View implements PropertyChangeListener {
         }
     }
 
+    /**
+     * Updates the selected shape button (the one in the shapeSelectionToolbar) based on the given shape type.
+     *
+     * @param  shapeType  the type of shape to update the selected button for
+     */
     private void updateSelectedShapeButton(ShapeType shapeType) {
 
         selectedShapeButton.setSelected(false);
+        selectedShapeButton.setBackground(null); //reset the background of the previously selected button to default.
         switch(shapeType) {
             case LINE:
                 selectedShapeButton = lineButton;
@@ -385,11 +446,6 @@ public class View implements PropertyChangeListener {
             break;
         }
         selectedShapeButton.setSelected(true);
-    }
-
-    public static void main(String[] args) {
-        Model model = new Model();
-
-        new View(model, new Controller(model));
+        selectedShapeButton.setBackground(Color.LIGHT_GRAY);
     }
 }
