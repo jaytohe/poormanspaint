@@ -129,7 +129,6 @@ public class Controller {
      */
     public void showExportImageDialog(Component parent) {
         JFileChooser fileChooser = new JFileChooser();
-        fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
         fileChooser.setDialogTitle("Export Canvas As");
         fileChooser.setApproveButtonText("Export");
         fileChooser.setApproveButtonToolTipText("Export the Image");
@@ -138,7 +137,15 @@ public class Controller {
         if (returnVal == JFileChooser.APPROVE_OPTION) { // if the user selected a directory and clicked Export.
             File selectedFilePath = fileChooser.getSelectedFile();
 
+            if (selectedFilePath.getName().equals("")) {
+                JOptionPane.showMessageDialog(parent, "Error: Invalid File Name", "Export Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
             try {
+
+                //Add .jpeg file extension
+                selectedFilePath = new File(selectedFilePath.getAbsolutePath() + ".jpeg");
+
                 model.exportCanvasAsImage(selectedFilePath, parent.getWidth(), parent.getHeight()); //we pass in the width and the height of the canvas so that only what the user sees gets exported.
                 //If we reach here it means the export was successful
                 JOptionPane.showMessageDialog(parent, "Image Export Successful!", "Export", JOptionPane.INFORMATION_MESSAGE);
