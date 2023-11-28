@@ -5,9 +5,11 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.Point2D;
 
-public class Triangle extends Shape {
-    public Triangle(int startX, int startY, int endX, int endY, Color borderColor, BasicStroke borderWidth) {
+public class Triangle extends Shape implements ColorFillable {
+    private Color fillColor;
+    public Triangle(int startX, int startY, int endX, int endY, Color borderColor, Color fillColor, BasicStroke borderWidth) {
         super(startX, startY, endX, endY, borderColor, borderWidth);
+        this.fillColor = fillColor;
     }
 
     @Override
@@ -22,6 +24,11 @@ public class Triangle extends Shape {
         int[] xPoints = {minX, minX + width, minX + width / 2};
         int[] yPoints = {minY + height, minY + height, minY};
 
+        //g.drawPolygon(xPoints, yPoints, 3);
+
+        g.setColor(fillColor);
+        g.fillPolygon(xPoints, yPoints, 3);
+        g.setColor(borderColor);
         g.drawPolygon(xPoints, yPoints, 3);
 
         if (beforeRotation != null) {
@@ -65,7 +72,17 @@ public class Triangle extends Shape {
     }
 
     public Shape clone() {
-        return new Triangle(startPoint.x, startPoint.y, endPoint.x, endPoint.y, borderColor, borderWidth);
+        return new Triangle(startPoint.x, startPoint.y, endPoint.x, endPoint.y, borderColor, fillColor, borderWidth);
+    }
+
+    @Override
+    public Color getFillColor() {
+        return this.fillColor;
+    }
+
+    @Override
+    public void setFillColor(Color fillColor) {
+        this.fillColor = fillColor;
     }
 
 }

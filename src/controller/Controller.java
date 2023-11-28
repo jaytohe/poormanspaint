@@ -1,16 +1,23 @@
 package controller;
 
 import java.awt.BasicStroke;
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.event.ActionListener;
 import java.io.File;
 
+import javax.swing.JCheckBox;
 import javax.swing.JColorChooser;
+import javax.swing.JDialog;
 import javax.swing.JFileChooser;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 
 import model.Model;
 import model.ShapeType;
+import view.CustomColorChooserDialog;
 
 
 public class Controller {
@@ -64,20 +71,47 @@ public class Controller {
 
 
     /**
-     * Displays a color chooser dialog to allow the user to pick a color. The selected color
-     * is then used to update the border color of the model. If the select mode is enabled,
+     * Displays a custom color chooser dialog to allow the user to pick a line color or fill color. The selected color
+     * is then used to update the  the model. If the select mode is enabled,
      * the selected color is also applied to the currently selected shape.
      *
      * @param  parent  the parent component to display the color chooser dialog
      */
     public void showColorChooser(Component parent) {
-        Color pickedColor = JColorChooser.showDialog(parent, "Choose Color", model.getBorderColor()); // fire up a color chooser dialog with the default color being the previously selected color.
-        if (pickedColor != null) {
-            if (model.isSelectModeEnabled()) {
-                model.colorSelectedShape(pickedColor);
+        
+        final CustomColorChooserDialog colorChooser = new CustomColorChooserDialog(
+            model.isFillColorSelected() ?  model.getFillColor() : model.getBorderColor(), 
+            model.isFillColorSelected()
+        );
+        ActionListener okListener = (e -> {
+            Color pickedColor = colorChooser.getColor();
+            if (pickedColor != null) {
+                if (model.isSelectModeEnabled()) {
+
+                    if (colorChooser.isFillColorSelected()) {
+                        model.setFillColorSelectedShape(pickedColor);
+                        model.setFillColorSelected(true);
+                    }
+                    else {
+                        model.setBorderColorSelectedShape(pickedColor);
+                        model.setFillColorSelected(false);
+                    }
+                }
+
+                if (colorChooser.isFillColorSelected()) {
+                    model.setFillColorSelected(true);
+                    model.setFillColor(pickedColor);
+                }
+                else {
+                    model.setFillColorSelected(false);
+                    model.setBorderColor(pickedColor);
+                }
             }
-            model.setBorderColor(pickedColor);
-        }
+        });
+
+        JDialog dialog = colorChooser.createDialog(parent, "Choose Color", false, okListener, null);
+        dialog.setVisible(true);
+        dialog.pack();
     }
 
 

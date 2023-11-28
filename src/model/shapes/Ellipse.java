@@ -7,13 +7,14 @@ import java.awt.Point;
 import java.awt.geom.Point2D;
 
 
-public class Ellipse extends Shape implements ShiftKeyModifiable {
+public class Ellipse extends Shape implements ShiftKeyModifiable, ColorFillable {
 
     private boolean drawCircle;
-
-    public Ellipse(int startX, int startY, int endX, int endY, Color borderColor, BasicStroke borderWidth, boolean drawCircle) {
+    private Color fillColor;
+    public Ellipse(int startX, int startY, int endX, int endY, Color borderColor, Color fillColor, BasicStroke borderWidth, boolean drawCircle) {
         super(startX, startY, endX, endY, borderColor, borderWidth);
         this.drawCircle = drawCircle;
+        this.fillColor = fillColor;
     }
 
     public void setSHIFTKeyState(boolean state) {
@@ -71,10 +72,18 @@ public class Ellipse extends Shape implements ShiftKeyModifiable {
 
             int centerX = topLeftPoint.x + width/2 - diameter/2;
             int centerY = topLeftPoint.y + height/2 - diameter/2;
-            g.drawOval(centerX, centerY, diameter, diameter);      
+
+            g.setColor(fillColor);
+            g.fillOval(centerX, centerY, diameter, diameter);
+            g.setColor(borderColor);
+            g.drawOval(centerX, centerY, diameter, diameter);     
         }
         else {
             //g.drawOval(getMinX(), getMinY(), getWidth(), getHeight());
+            g.setColor(fillColor);
+            g.fillOval(topLeftPoint.x, topLeftPoint.y, width, height);
+            g.setColor(borderColor);
+            g.setStroke(borderWidth);
             g.drawOval(topLeftPoint.x, topLeftPoint.y, width, height);
         }
 
@@ -102,7 +111,17 @@ public class Ellipse extends Shape implements ShiftKeyModifiable {
     }
 
     public Shape clone() {
-        return new Ellipse(startPoint.x, startPoint.y, endPoint.x, endPoint.y, borderColor, borderWidth, drawCircle);
+        return new Ellipse(startPoint.x, startPoint.y, endPoint.x, endPoint.y, borderColor, fillColor, borderWidth, drawCircle);
+    }
+
+    @Override
+    public Color getFillColor() {
+        return this.fillColor;
+    }
+
+    @Override
+    public void setFillColor(Color fillColor) {
+        this.fillColor = fillColor;
     }
     
 }

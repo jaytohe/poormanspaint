@@ -6,15 +6,18 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.geom.Point2D;
 
-public class Rectangle extends Shape implements ShiftKeyModifiable {
+public class Rectangle extends Shape implements ShiftKeyModifiable, ColorFillable {
 
 
     private boolean drawSquare;
-
-    public Rectangle(int startX, int startY, int endX, int endY, Color borderColor, BasicStroke borderWidth, boolean drawSquare) {
+    private Color fillColor;
+    public Rectangle(int startX, int startY, int endX, int endY, Color borderColor,Color fillColor, BasicStroke borderWidth, boolean drawSquare) {
         super(startX, startY, endX, endY, borderColor, borderWidth);
         this.drawSquare = drawSquare;
+
+        this.fillColor = fillColor;
     }
+
 
     public void setSHIFTKeyState(boolean state) {
         drawSquare = state;
@@ -68,7 +71,7 @@ public class Rectangle extends Shape implements ShiftKeyModifiable {
         //Midpoint of the x axis
         double midPointX = getTopLeftPoint().x + width / 2;
 
-        //Midpoint of the y axis
+        //Midpoint of theColor fillColor, y axis
         double midPointY = getTopLeftPoint().y + height / 2;
 
         
@@ -91,6 +94,10 @@ public class Rectangle extends Shape implements ShiftKeyModifiable {
         if (drawSquare) {
             height = width = Math.max(width, height);
         }
+
+        g.setColor(fillColor);
+        g.fillRect(topLeftPoint.x, topLeftPoint.y, width, height);
+        g.setColor(borderColor);
         g.drawRect(topLeftPoint.x, topLeftPoint.y, width, height);
         if (beforeRotation != null) {
             g.setTransform(beforeRotation);
@@ -98,7 +105,17 @@ public class Rectangle extends Shape implements ShiftKeyModifiable {
     }
 
     public Shape clone() {
-        return new Rectangle(startPoint.x, startPoint.y, endPoint.x, endPoint.y, borderColor, borderWidth, drawSquare);
+        return new Rectangle(startPoint.x, startPoint.y, endPoint.x, endPoint.y, borderColor, fillColor, borderWidth, drawSquare);
+    }
+
+    @Override
+    public Color getFillColor() {
+        return fillColor;
+    }
+
+    @Override
+    public void setFillColor(Color fillColor) {
+        this.fillColor = fillColor;
     }
 
     /* @Override

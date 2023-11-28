@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import model.shapes.ColorFillable;
 import model.shapes.Ellipse;
 import model.shapes.Line;
 import model.shapes.Rectangle;
@@ -32,14 +33,17 @@ public class Model {
 
     private Shape selectedShape = null;
     private boolean selectModeEnabled = false;
+    private boolean isFillColorSelected = false;
 
     private Color borderColor;
+    private Color fillColor;
     private BasicStroke borderWidth;
     
     public Model() {
         shapeType = ShapeType.LINE;
         oldShapeType = ShapeType.LINE;
         borderColor = Color.BLACK;
+        fillColor = Color.WHITE;
         borderWidth = new BasicStroke(1);
 
         drawingPanelStates = new ArrayList<>();
@@ -70,8 +74,17 @@ public class Model {
         return borderColor;
     }
 
+    public Color getFillColor() {
+        return fillColor;
+    }
+
     public void setBorderColor(Color borderColor) {
         this.borderColor = borderColor;
+    }
+
+
+    public void setFillColor(Color fillColor) {
+        this.fillColor = fillColor;
     }
 
 
@@ -209,6 +222,14 @@ public class Model {
         notifier.firePropertyChange("selectModeEnabled", null, selectModeEnabled);
     }
 
+
+    public boolean isFillColorSelected() {
+        return isFillColorSelected;
+    }
+    public void setFillColorSelected(boolean b) {
+        this.isFillColorSelected = b;
+    }
+
     public void moveSelectedShape(int xOffset, int yOffset) {
         if (selectedShape != null) {
             selectedShape.move(xOffset, yOffset);
@@ -234,9 +255,17 @@ public class Model {
         }
     }
 
-    public void colorSelectedShape(Color borderColor) {
+    public void setBorderColorSelectedShape(Color borderColor) {
         if (selectedShape != null) {
             selectedShape.setBorderColor(borderColor);
+            // Notify the view to redraw the shapes
+            notifier.firePropertyChange("drawnShapes", null, currentDrawingPanelState);
+        }
+    }
+
+        public void setFillColorSelectedShape(Color borderColor) {
+        if (selectedShape != null && selectedShape instanceof ColorFillable) {
+            ((ColorFillable) selectedShape).setFillColor(borderColor);
             // Notify the view to redraw the shapes
             notifier.firePropertyChange("drawnShapes", null, currentDrawingPanelState);
         }
@@ -258,13 +287,13 @@ public class Model {
                 currentDrawingPanelState.add(new Line(startX, startY, endX, endY, borderColor, borderWidth));
                 break;
             case RECTANGLE:
-                currentDrawingPanelState.add(new Rectangle(startX, startY, endX, endY, borderColor, borderWidth, SHIFTKeyDown));
+                currentDrawingPanelState.add(new Rectangle(startX, startY, endX, endY, borderColor, fillColor, borderWidth, SHIFTKeyDown));
                 break;
             case TRIANGLE:
-                currentDrawingPanelState.add(new Triangle(startX, startY, endX, endY, borderColor, borderWidth));
+                currentDrawingPanelState.add(new Triangle(startX, startY, endX, endY, borderColor, fillColor, borderWidth));
                 break;
             case ELLIPSE:
-                currentDrawingPanelState.add(new Ellipse(startX, startY, endX, endY, borderColor, borderWidth, SHIFTKeyDown));
+                currentDrawingPanelState.add(new Ellipse(startX, startY, endX, endY, borderColor, fillColor, borderWidth, SHIFTKeyDown));
                 break;
         }
         
