@@ -31,7 +31,7 @@ public class CustomColorChooserDialog extends JColorChooser {
     }
 
     public JDialog createDialog(Component parent, String title, boolean modal, ActionListener okListener, ActionListener cancelListener) {
-        dialog = super.createDialog(parent, title, false, this, okListener, cancelListener);
+        dialog = super.createDialog(parent, title, true, this, okListener, cancelListener);
         dialog.add(checkboxPanel, BorderLayout.PAGE_START);
 
         return dialog;

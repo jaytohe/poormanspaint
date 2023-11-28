@@ -114,32 +114,50 @@ public class View implements PropertyChangeListener {
      * @return None
      */
     private void buildMenuBar() {
-
-        //File menu that allows export as JPG or exiting.
-        JMenu fileMenu = new JMenu ("File");
-        JMenuItem exportItem = new JMenuItem ("Export");        
-        JMenuItem exitItem = new JMenuItem ("Exit");
-
-
-        //Set export button to open file dialog for export.
+        // File menu that allows export as JPG or exiting.
+        JMenu fileMenu = new JMenu("File");
+        JMenuItem exportItem = new JMenuItem("Export");
+        JMenuItem exitItem = new JMenuItem("Exit");
+    
+        // Set export button to open file dialog for export.
         exportItem.addActionListener(e -> {
             controller.showExportImageDialog(mainFrame);
         });
-
-        //Set exit button to clear all shapes and exit the program.
+    
+        // Set exit button to clear all shapes and exit the program.
         exitItem.addActionListener(e -> {
             controller.clearAllShapes();
             System.exit(0);
         });
-
-
+    
         fileMenu.add(exportItem);
         fileMenu.add(exitItem);
+    
+        // Network menu with submenu items
+        JMenu networkMenu = new JMenu("Network");
+        JMenuItem connectItem = new JMenuItem("Connect");
+        JMenuItem fetchShapesItem = new JMenuItem("Fetch Shapes");
+        JMenuItem pushShapesItem = new JMenuItem("Push Shapes");
+    
+        // Disable fetchShapesItem and pushShapesItem by default
+        fetchShapesItem.setEnabled(false);
+        pushShapesItem.setEnabled(false);
 
-        //Add both menus to menu bar
+
+        //Add listeners to the menu items
+        connectItem.addActionListener(e -> {
+            controller.showNetworkConnectDialog(mainFrame);
+        });
+    
+        networkMenu.add(connectItem);
+        networkMenu.add(fetchShapesItem);
+        networkMenu.add(pushShapesItem);
+    
+        // Add both menus to menu bar
         menuBar.add(fileMenu);
-
-        //Add menu to main frame
+        menuBar.add(networkMenu);
+    
+        // Add menu to main frame
         mainFrame.setJMenuBar(menuBar);
     }
 

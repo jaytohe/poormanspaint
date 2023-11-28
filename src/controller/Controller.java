@@ -4,8 +4,10 @@ import java.awt.BasicStroke;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Frame;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.nio.channels.NetworkChannel;
 
 import javax.swing.JCheckBox;
 import javax.swing.JColorChooser;
@@ -18,6 +20,7 @@ import javax.swing.JPanel;
 import model.Model;
 import model.ShapeType;
 import view.CustomColorChooserDialog;
+import view.NetworkConnectDialog;
 
 
 public class Controller {
@@ -155,6 +158,25 @@ public class Controller {
             }
         }
 
+    }
+
+    public void showNetworkConnectDialog(Frame parent) {
+        NetworkConnectDialog dialog = new NetworkConnectDialog(parent, "Connect to Drawing Server");
+
+        dialog.setConnectButtonListener(e -> {
+            // Custom logic for the connect button listener
+            String serverUrl = dialog.getServerUrl();
+            String token = dialog.getToken();
+            // Handle server connection logic here
+            dialog.dispose();
+        });
+
+        dialog.setExitButtonListener(e -> {
+            // Close the dialog.
+            dialog.dispose();
+        });
+
+        dialog.setVisible(true);
     }
 
     /**
