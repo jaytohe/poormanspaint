@@ -206,8 +206,22 @@ public class Controller {
         dialog.setVisible(true);
     }
 
-    public void fetchShapesFromServer() {
-        model.getTCPDrawingClient().fetchShapes();
+    public void fetchShapesFromServer(Component parent) {
+        if (model.getTCPDrawingClient() != null) {
+            model.getTCPDrawingClient().fetchShapes();
+        }
+        else {
+            JOptionPane.showMessageDialog(parent, "Error: You need to connect to a server first.", "Connection Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    public void pushShapesToServer(Component parent) {
+        if (model.getTCPDrawingClient() != null) {
+            model.getTCPDrawingClient().pushShapes();
+        }
+        else {
+            JOptionPane.showMessageDialog(parent, "Error: You need to connect to a server first.", "Connection Error", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     /**
@@ -215,7 +229,7 @@ public class Controller {
      * If the select mode is enabled,
      * the selected line thickness is also applied to the currently selected shape.
      *
-     * @param  width  the line thicknss
+     * @param  width  the line thickness
      * @return        void
      */
     public void setBorderWidth(float width) {

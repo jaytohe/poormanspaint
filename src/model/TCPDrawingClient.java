@@ -6,6 +6,7 @@ import java.net.*;
 
 import javax.json.*;
 import javax.swing.JOptionPane;
+import java.util.List;
 
 public class TCPDrawingClient {
 
@@ -78,6 +79,29 @@ public class TCPDrawingClient {
             }
         }).start();
     }
+
+
+    public void pushShapes() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    PrintWriter out = new PrintWriter(socket.getOutputStream());
+
+                    List<JsonObject> jsonShapes = model.createJsonFromDrawingPanelState();
+
+                    for (JsonObject jsonShape : jsonShapes) {
+                        System.out.println(jsonShape.toString());
+                        out.println(jsonShape.toString());
+                        out.flush();
+                    }
+                }
+                catch (IOException ie) {
+                    ie.printStackTrace();
+                }
+            }
+        }).start();
+    }
 }
 
 class TCPDrawingClientInputReader extends Thread {
@@ -100,7 +124,7 @@ class TCPDrawingClientInputReader extends Thread {
             while ((line = in.readLine()) != null) {
 
                 //DEUG
-                //System.out.println("Received: " + line);
+                System.out.println("Received: " + line);
 
                 JsonReader reader = Json.createReader(new StringReader(line));
                 JsonStructure json = reader.read();
@@ -114,15 +138,15 @@ class TCPDrawingClientInputReader extends Thread {
 
                     if (responseStatus != null) {
                         if (responseStatus.equals("ok") && !authenticated) {
-                            JOptionPane.showMessageDialog(parent, "Auhentication Sucessful!", "Connection", JOptionPane.INFORMATION_MESSAGE);
+                            JOptionPane.showMessageDialog(parent, "Authentication Sucessful!", "Connection", JOptionPane.INFORMATION_MESSAGE);
                             authenticated = true;
                         } else if (responseStatus.equals("error") && !authenticated) {
                             JOptionPane.showMessageDialog(parent, "Authentication Failed!", "Connection Error", JOptionPane.ERROR_MESSAGE);
                         }
                         else {
-                            String message = jsonResponse.getString("message");
+                            JsonString message = jsonResponse.getJsonString("message");
                             if (message != null)
-                                JOptionPane.showMessageDialog(parent, message, "Connection Error", JOptionPane.ERROR_MESSAGE);
+                                JOptionPane.showMessageDialog(parent, message.getString(), "Connection Error", JOptionPane.ERROR_MESSAGE);
                         }
 
                     }

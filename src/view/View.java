@@ -34,6 +34,8 @@ public class View implements PropertyChangeListener {
     private JFrame mainFrame;
     private DrawingPanel drawingPanel; //Custom JPanel that allows us to draw shapes on it.
     private JMenuBar menuBar;
+    private JMenuItem fetchShapesItem;
+    private JMenuItem pushShapesItem;
     private JToolBar actionsToolbar; //Contains Undo, Redo and Select.
     private JToolBar selectOptionsToolbar; //Contains Rotation, Scale.
     private JToolBar shapeSelectionToolbar; // Contains shape selection buttons
@@ -138,12 +140,12 @@ public class View implements PropertyChangeListener {
         // Network menu with submenu items
         JMenu networkMenu = new JMenu("Network");
         JMenuItem connectItem = new JMenuItem("Connect");
-        JMenuItem fetchShapesItem = new JMenuItem("Fetch Shapes");
-        JMenuItem pushShapesItem = new JMenuItem("Push Shapes");
+        this.fetchShapesItem = new JMenuItem("Fetch Shapes");
+        this.pushShapesItem = new JMenuItem("Push Shapes");
     
         // Disable fetchShapesItem and pushShapesItem by default
-        fetchShapesItem.setEnabled(true);
-        pushShapesItem.setEnabled(false);
+        this.fetchShapesItem.setEnabled(false);
+        this.pushShapesItem.setEnabled(false);
 
 
         //Add listeners to the menu items
@@ -151,12 +153,20 @@ public class View implements PropertyChangeListener {
             controller.showNetworkConnectDialog(mainFrame);
         });
 
-        fetchShapesItem.addActionListener(e -> {
+        this.fetchShapesItem.addActionListener(e -> {
             JOptionPane optionPane = new JOptionPane("Fetching Shapes. Please wait...", JOptionPane.INFORMATION_MESSAGE);
             JDialog dialog = optionPane.createDialog(mainFrame, "Message");
             dialog.setModal(false); // Set the dialog to be non-blocking
             dialog.setVisible(true);
-            controller.fetchShapesFromServer();
+            controller.fetchShapesFromServer(mainFrame);
+        });
+
+        this.pushShapesItem.addActionListener(e -> {
+            JOptionPane optionPane = new JOptionPane("Pushing local shapes to server. Please wait...", JOptionPane.INFORMATION_MESSAGE);
+            JDialog dialog = optionPane.createDialog(mainFrame, "Message");
+            dialog.setModal(false); // Set the dialog to be non-blocking
+            dialog.setVisible(true);
+            controller.pushShapesToServer(mainFrame);
         });
     
         networkMenu.add(connectItem);
@@ -441,8 +451,14 @@ public class View implements PropertyChangeListener {
                     selectButton.setSelected(selectModeEnabled);
                 };
                 break;
-            default:
-                return;
+            
+            case "connectedServer":
+                uiAction = () -> {
+                    boolean connectedToServer = (Boolean) event.getNewValue();
+                    fetchShapesItem.setEnabled(connectedToServer);
+                    pushShapesItem.setEnabled(connectedToServer);
+                };
+                break;
         }
 
         if (uiAction != null) {

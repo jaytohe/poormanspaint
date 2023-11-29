@@ -46,7 +46,7 @@ public class Model {
 
 
     HashMap<String, Color> supportedColors = new HashMap<String, Color>();
-    
+    HashMap<Color, String> supportedColorsRev = new HashMap<Color, String>();
     public Model() {
         shapeType = ShapeType.LINE;
         oldShapeType = ShapeType.LINE;
@@ -64,18 +64,31 @@ public class Model {
         
         //Supported Json colors.
         supportedColors.put("red", Color.RED);
+        supportedColorsRev.put(Color.RED, "red");
         supportedColors.put("green", Color.GREEN);
+        supportedColorsRev.put(Color.GREEN, "green");
         supportedColors.put("blue", Color.BLUE);
+        supportedColorsRev.put(Color.BLUE, "blue");
         supportedColors.put("yellow", Color.YELLOW);
+        supportedColorsRev.put(Color.YELLOW, "yellow");
         supportedColors.put("black", Color.BLACK);
+        supportedColorsRev.put(Color.BLACK, "black");
         supportedColors.put("white", Color.WHITE);
+        supportedColorsRev.put(Color.WHITE, "white");
         supportedColors.put("cyan", Color.CYAN);
+        supportedColorsRev.put(Color.CYAN, "cyan");
         supportedColors.put("magenta", Color.MAGENTA);
+        supportedColorsRev.put(Color.MAGENTA, "magenta");
         supportedColors.put("orange", Color.ORANGE);
+        supportedColorsRev.put(Color.ORANGE, "orange");
         supportedColors.put("pink", Color.PINK);
+        supportedColorsRev.put(Color.PINK, "pink");
         supportedColors.put("gray", Color.GRAY);
+        supportedColorsRev.put(Color.GRAY, "gray");
         supportedColors.put("darkGray", Color.DARK_GRAY);
+        supportedColorsRev.put(Color.DARK_GRAY, "darkGray");
         supportedColors.put("lightGray", Color.LIGHT_GRAY);
+        supportedColorsRev.put(Color.LIGHT_GRAY, "lightGray");
     }
 
     public void addListener(PropertyChangeListener pe) {
@@ -84,6 +97,7 @@ public class Model {
 
     public void setTCPDrawingClient(TCPDrawingClient client) {
         this.client = client;
+        notifier.firePropertyChange("connectedServer", null, client != null);
     }
 
     public TCPDrawingClient getTCPDrawingClient() {
@@ -141,9 +155,79 @@ public class Model {
         currentDrawingPanelState = drawingPanelStates.get(currentDrawingPanelStatePosition);
     }
 
+    private String getShapeNameByInstance(Shape shape) {
+        if (shape instanceof Line) {
+            return "line";
+        }
+        if (shape instanceof Rectangle) {
+            return "rectangle";
+        }
+        if (shape instanceof Ellipse) {
+            return "ellipse";
+        }
+        if (shape instanceof Triangle) {
+            return "triangle";
+        }
+        return "";
+    }
+
+    public List<JsonObject> createJsonFromDrawingPanelState() {
+
+        List<JsonObject> jsonShapes = new ArrayList<>();
+
+        JsonBuilderFactory factory = Json.createBuilderFactory(null);
+
+        for (Shape shape: getShapes()) {
+
+            if (shape instanceof Triangle) {
+                continue;
+            }
+
+            int x = shape.getStartPoint().x;
+            int y = shape.getStartPoint().y;
+            String type = getShapeNameByInstance(shape);
+            String borderColor = supportedColorsRev.getOrDefault(shape.getBorderColor(), "black");
+            int borderWidth = (int) shape.getBorderWidth().getLineWidth();
+            JsonObjectBuilder b0 = factory.createObjectBuilder();
+            JsonObjectBuilder b1 = factory.createObjectBuilder();
+            JsonObjectBuilder b2 = factory.createObjectBuilder();
+
+            b1.add("type", type);
+            b1.add("x", x);
+            b1.add("y", y);
+            if (shape instanceof ColorFillable) {
+                String fillColor = supportedColorsRev.getOrDefault( ((ColorFillable) shape).getFillColor(), "black");
+                int width = shape.getWidth();
+                int height = shape.getHeight();
+                int rotation = (int) Math.toDegrees(shape.getRotationAngle());
+                b2.add("width", width);
+                b2.add("height", height);
+                b2.add("rotation", rotation);
+                b2.add("borderColor", borderColor);
+                b2.add("borderWidth", borderWidth);
+                b2.add("fillColor", fillColor);
+            }
+            if (shape instanceof Line) {
+                int x2 = shape.getEndPoint().x;
+                int y2 = shape.getEndPoint().y;
+
+                b2.add("x2", x2);
+                b2.add("y2", y2);
+                b2.add("lineColor", borderColor);
+                b2.add("lineWidth", borderWidth);
+            }
+
+            b1.add("properties", b2);
+
+            b0.add("action", "addDrawing");
+            b0.add("data", b1);
+            jsonShapes.add(b0.build());
+        }
+
+        return jsonShapes;
+    }
+
     public void createDrawingPanelStateFromJson(JsonArray jsonShapeArray) throws IOException, NumberFormatException, ClassCastException {
-
-
         List<Shape> fetchedState = new ArrayList<>();
         for (JsonValue jsonValue: jsonShapeArray) {
 
