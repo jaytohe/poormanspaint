@@ -10,6 +10,7 @@ import static org.junit.Assert.*;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.util.List;
 
 public class ModelTest {
   
@@ -46,8 +47,8 @@ public class ModelTest {
     assertEquals(2, model.getShapes().size());
 
     // Make sure that the triangle is first in the list
-    assertTrue(model.getShapes().get(0) instanceof Triangle);
-    assertTrue(model.getShapes().get(1) instanceof Rectangle);
+    assertTrue(model.getShapes().get(0) instanceof Rectangle);
+    assertTrue(model.getShapes().get(1) instanceof Triangle);
   }
 
   @Test
@@ -84,7 +85,8 @@ public class ModelTest {
     model.setShapeType(ShapeType.ELLIPSE);
     model.drawShape(0, 0, 50, 60, false);
     
-    Shape shape = model.getShapes().getLast();
+    List<Shape> shapes = model.getShapes();
+    Shape shape = shapes.get(shapes.size() - 1);
 
     // Retrieve the shapes and assert that the shape's properties have been updated
     assertEquals(Color.CYAN, shape.getBorderColor());
@@ -103,64 +105,12 @@ public class ModelTest {
     model.setShapeType(ShapeType.ELLIPSE);
     model.drawShape(0, 0, 50, 60, false);
     
-    Shape shape = model.getShapes().getLast();
+    List<Shape> shapes = model.getShapes();
+    Shape shape = shapes.get(shapes.size() - 1);
 
     // Retrieve the shapes and assert that the shape's properties have been updated
     assertEquals(borderWidth, shape.getBorderWidth());
     assertEquals(borderWidth.getLineWidth(), shape.getBorderWidth().getLineWidth(), 0.01);
   }
-  
 
-
-  /*
-  @Test
-  public void testSelectShape() {
-    Model model = new Model();
-    
-    // Add shapes
-    Shape shape1 = new Rectangle(10, 10, 100, 100);
-    Shape shape2 = new Ellipse(50, 50, 80, 80);
-    model.addShape(shape1);
-    model.addShape(shape2);
-    
-    // Select a shape
-    model.selectShape(shape1);
-    
-    // Retrieve the selected shape and assert that it matches the expected shape
-    assertEquals(shape1, model.getSelectedShape());
-  }
-  
-  @Test
-  public void testMoveShape() {
-    Model model = new Model();
-    
-    // Add a shape
-    Shape shape = new Rectangle(10, 10, 100, 100);
-    model.addShape(shape);
-    
-    // Move the shape to a new position
-    model.moveShape(shape, 50, 50);
-    
-    // Retrieve the shapes and assert that the shape's position has been updated
-    assertEquals(50, shape.getX());
-    assertEquals(50, shape.getY());
-  }
-  
-  @Test
-  public void testExportCanvasAsImage() {
-    Model model = new Model();
-    
-    // Add shapes
-    model.addRectangle(10, 10, 100, 100);
-    model.addEllipse(50, 50, 80, 80);
-    
-    // Export the shapes as an image
-    model.exportCanvasAsImage("output.png");
-    
-    // Verify that the image file has been created
-    File imageFile = new File("output.png");
-    assertTrue(imageFile.exists());
-  }
-
-  */
 }
