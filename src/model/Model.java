@@ -27,9 +27,6 @@ public class Model {
 
 
     private List<List<Shape>> drawingPanelStates;
-   // private LinkedList<Shape> shapes;
-   // private LinkedList<Shape> undoneShapes;
-
     private int currentDrawingPanelStatePosition;
     private List<Shape> currentDrawingPanelState;
     private PropertyChangeSupport notifier;
@@ -58,8 +55,6 @@ public class Model {
         drawingPanelStates.add(new ArrayList<>());
         currentDrawingPanelStatePosition = 0;
         currentDrawingPanelState = drawingPanelStates.get(currentDrawingPanelStatePosition);
-       // shapes = new LinkedList<>();
-       // undoneShapes = new LinkedList<>();
         this.notifier = new PropertyChangeSupport(this);
         
         //Supported Json colors.

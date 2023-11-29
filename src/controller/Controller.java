@@ -1,25 +1,16 @@
 package controller;
 
 import java.awt.BasicStroke;
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Frame;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
-import java.net.Socket;
 import java.net.UnknownHostException;
-import java.nio.channels.NetworkChannel;
-
-import javax.swing.JCheckBox;
-import javax.swing.JColorChooser;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
-import javax.swing.JFrame;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-
 import model.Model;
 import model.ShapeType;
 import model.TCPDrawingClient;
@@ -164,6 +155,15 @@ public class Controller {
 
     }
 
+    /**
+     * Shows a network connect dialog where the user can input the drawing server hostname, the port and their
+     * authentication token.
+     * 
+     * If the server cannot be found or the port number is invalid, an error message is displayed.
+     * 
+     *
+     * @param  parent  the parent frame
+     */
     public void showNetworkConnectDialog(Frame parent) {
         NetworkConnectDialog dialog = new NetworkConnectDialog(parent, "Connect to Drawing Server");
 
@@ -206,6 +206,12 @@ public class Controller {
         dialog.setVisible(true);
     }
 
+    /**
+     * Tells the TCP drawing client to fetch the shapes submitted by users from the server.
+     * This only works if the user is authenticated. If they are not, an error message is displayed.
+     *
+     * @param  parent  the parent component
+     */
     public void fetchShapesFromServer(Component parent) {
         if (model.getTCPDrawingClient() != null) {
             model.getTCPDrawingClient().fetchShapes();
@@ -215,6 +221,14 @@ public class Controller {
         }
     }
 
+    
+
+    /**
+     * Tells the TCP drawing client to push shapes to the server drawn locally by the user.
+     * This only works if the user is authenticated. If they are not, an error message is displayed.
+     *
+     * @param  parent  the parent component
+     */
     public void pushShapesToServer(Component parent) {
         if (model.getTCPDrawingClient() != null) {
             model.getTCPDrawingClient().pushShapes();
