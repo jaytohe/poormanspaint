@@ -1,3 +1,17 @@
+## Note:
+
+For some reason after I compile with javac, the javax.json library cannot be found. This means that you'll get an exception if you try to test the Networking part: 
+
+> Exception in thread "Thread-1" java.lang.NoClassDefFoundError: javax/json/Json
+>	at model.TCPDrawingClient$1.run(TCPDrawingClient.java:46)
+>	at java.base/java.lang.Thread.run(Thread.java:833)
+
+
+You can look at the code present in model/TCPDrawingClient.java to see that I implemented some of the required functionality.
+
+My app works fine in VSCode with the Java Extension Manager though so you can try running it from there.
+
+
 ## How to compile and run
 
 From the parent/root directory of this project do the following:
