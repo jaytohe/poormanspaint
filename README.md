@@ -21,6 +21,22 @@ you can then run the app using:
 `java Main`
 
 
+## Running the tests
+
+- The tests I've written are very basic and I admit that.
+
+- I used JUnit v4 and it works if you import the project into VSCode and use the Java Extension Manager.
+
+- I tried to figure out how to get it running from the command line to no avail.
+
+Note: The tests exist in ModelTest.java and the junit library in the lib/ directory. I googled and found that I need to run something like this: 
+
+`java -cp '.:lib/junit-4.13.2.jar' org.junit.runner.JUnitCore bin/ModelTest.class`
+
+But that does not work and I get "java.lang.IllegalArgumentException: Could not find class [bin/ModelTest.class]."
+
+
+
 ## General info
 
 - Drawing squares and circles is implemented by pressing down the SHIFT key while dragging to create a rectangle or an ellipse.

@@ -1,5 +1,3 @@
-package test;
-
 import org.junit.Test;
 
 import model.Model;
