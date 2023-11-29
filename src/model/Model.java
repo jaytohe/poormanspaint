@@ -21,16 +21,24 @@ import model.shapes.Ellipse;
 import model.shapes.Line;
 import model.shapes.Rectangle;
 
+/**
+ * The `Model` class represents the data and logic of the application.
+ * It manages the shapes, shape types, and the state of the drawing panel.
+ */
 public class Model {
     private ShapeType shapeType;
     private ShapeType oldShapeType;
 
 
-    private List<List<Shape>> drawingPanelStates;
-    private int currentDrawingPanelStatePosition;
-    private List<Shape> currentDrawingPanelState;
-    private PropertyChangeSupport notifier;
+    private List<List<Shape>> drawingPanelStates; // used for undo-redo functionality.
+    // A state is defined as a list of shapes drawn on the drawing panel.
+    // Undo and redo allows the user to go back and forth between states in the list.
+    private int currentDrawingPanelStatePosition; // keeps track of the current position in the list
+    private List<Shape> currentDrawingPanelState; // keeps track of the current state in the list
 
+    private PropertyChangeSupport notifier; // used for notifying the View for changes in the model.
+
+    //Boolean state of stateful buttons in the View.
     private Shape selectedShape = null;
     private boolean selectModeEnabled = false;
     private boolean isFillColorSelected = false;
@@ -39,12 +47,15 @@ public class Model {
     private Color fillColor;
     private BasicStroke borderWidth;
 
-    private TCPDrawingClient client;
+    private TCPDrawingClient client; // used for communicating with a drawing server.
+    //allows pushing and pulling shapes.
 
-
+    //Supported colors for JSON encoding, decoding.
     HashMap<String, Color> supportedColors = new HashMap<String, Color>();
     HashMap<Color, String> supportedColorsRev = new HashMap<Color, String>();
+
     public Model() {
+        
         shapeType = ShapeType.LINE;
         oldShapeType = ShapeType.LINE;
         borderColor = Color.BLACK;
@@ -86,10 +97,22 @@ public class Model {
         supportedColorsRev.put(Color.LIGHT_GRAY, "lightGray");
     }
 
+    /**
+     * Adds a property change listener to the notifier.
+     *
+     * @param  pe  the property change listener to be added
+     * @return     void
+     */
     public void addListener(PropertyChangeListener pe) {
         notifier.addPropertyChangeListener(pe);
     }
 
+    /**
+     * Sets the TCPDrawingClient for this object.
+     *
+     * @param  client  the TCPDrawingClient to set
+     * @return         void
+     */
     public void setTCPDrawingClient(TCPDrawingClient client) {
         this.client = client;
         notifier.firePropertyChange("connectedServer", null, client != null);
@@ -99,11 +122,21 @@ public class Model {
         return client;
     }
 
+    
+
+    /**
+     * Updates which Shape button is selected in the View.
+     * Fires back to the view to let it know which button is selected.
+     *
+     * @param  None
+     * @return None
+     */
     private void updateSelectedShape() {
         notifier.firePropertyChange("selectedShapeType", oldShapeType, shapeType);
         oldShapeType = shapeType;
     }
 
+    
     public void setShapeType(ShapeType shapeType) {
         this.shapeType = shapeType;
         updateSelectedShape();
@@ -140,10 +173,29 @@ public class Model {
         return currentDrawingPanelState;
     }
 
+    /**
+     * Updates the current state of the drawing panel to the one given by currentDrawingPanelStatePosition.
+     *
+     * @param  None
+     * @return None
+     */
     private void updateCurrentDrawingPanelState() {
         currentDrawingPanelState = drawingPanelStates.get(currentDrawingPanelStatePosition);
     }
 
+    /**
+     * Updates the current state of the drawing panel with the provided list of shapes.
+     * 
+     * This is used in two scenarios:
+     * A) When the user selects a shape that is drawn on the screen. In that case the selection happens,
+     * in a cloned state of the current state. Therefore, if the selection is successful, the cloned state
+     * passed in must become the new current state.
+     * 
+     * B) When shapes drawn by the other users are fetched from a drawing server. In that case,
+     * the state which contains all the fetched shapes becomes the new state.
+     *
+     * @param  state  the new state of the drawing panel as a list of shapes
+     */
     private void updateCurrentDrawingPanelState(List<Shape> state) {
         if (currentDrawingPanelStatePosition+1 < drawingPanelStates.size()) {
             drawingPanelStates.set(currentDrawingPanelStatePosition+1, state);
@@ -155,6 +207,14 @@ public class Model {
         currentDrawingPanelState = drawingPanelStates.get(currentDrawingPanelStatePosition);
     }
 
+    
+
+    /**
+     * Returns the name of the shape based on the instance of the shape object.
+     *
+     * @param  shape  the shape object
+     * @return        the name of the shape (line, rectangle, ellipse, triangle) or an empty string if the shape is not recognized
+     */
     private String getShapeNameByInstance(Shape shape) {
         if (shape instanceof Line) {
             return "line";
@@ -171,6 +231,14 @@ public class Model {
         return "";
     }
 
+    /**
+     * Creates a list of JSON objects representing the shapes in the drawing panel state.
+     * 
+     * All shapes except Triangle are returned because this program supports only
+     * isosceles triangles.
+     *
+     * @return The list of JSON objects representing the shapes in the drawing panel state.
+     */
     public List<JsonObject> createJsonFromDrawingPanelState() {
 
         List<JsonObject> jsonShapes = new ArrayList<>();
@@ -179,27 +247,33 @@ public class Model {
 
         for (Shape shape: getShapes()) {
 
-            if (shape instanceof Triangle) {
+            if (shape instanceof Triangle) { //Skip triangle because it is not supported.
                 continue;
             }
 
+            // Get properties which are shared by ALL shapes.
             int x = shape.getStartPoint().x;
             int y = shape.getStartPoint().y;
             String type = getShapeNameByInstance(shape);
             String borderColor = supportedColorsRev.getOrDefault(shape.getBorderColor(), "black");
             int borderWidth = (int) shape.getBorderWidth().getLineWidth();
-            JsonObjectBuilder b0 = factory.createObjectBuilder();
-            JsonObjectBuilder b1 = factory.createObjectBuilder();
-            JsonObjectBuilder b2 = factory.createObjectBuilder();
+
+
+            JsonObjectBuilder b0 = factory.createObjectBuilder(); // Holds b1 and b2 and siginifies that an "addDrawing" action is being performed.
+            JsonObjectBuilder b1 = factory.createObjectBuilder(); // For properties which are shared by ALL shapes.
+            JsonObjectBuilder b2 = factory.createObjectBuilder(); // For properties which are specific to each shape.
 
             b1.add("type", type);
             b1.add("x", x);
             b1.add("y", y);
+
+            // Get properties which are specific to each shape.
+            // Here we distinguish between color-fillable shapes and the line.
             if (shape instanceof ColorFillable) {
                 String fillColor = supportedColorsRev.getOrDefault( ((ColorFillable) shape).getFillColor(), "black");
                 int width = shape.getWidth();
                 int height = shape.getHeight();
-                int rotation = (int) Math.toDegrees(shape.getRotationAngle());
+                int rotation = (int) Math.toDegrees(shape.getRotationAngle()); //TODO: Make get return in degrees.
                 b2.add("width", width);
                 b2.add("height", height);
                 b2.add("rotation", rotation);
@@ -218,7 +292,6 @@ public class Model {
             }
 
             b1.add("properties", b2);
-
             b0.add("action", "addDrawing");
             b0.add("data", b1);
             jsonShapes.add(b0.build());
@@ -227,6 +300,15 @@ public class Model {
         return jsonShapes;
     }
 
+    
+    /**
+     * Creates a drawing panel state from a JSON array of shapes.
+     *
+     * @param  jsonShapeArray  the JSON array of shapes
+     * @throws IOException              if there is an error reading the JSON array
+     * @throws NumberFormatException    if there is an error parsing a number from the JSON array
+     * @throws ClassCastException       if there is an error casting a JSON value to a JSON object
+     */
     public void createDrawingPanelStateFromJson(JsonArray jsonShapeArray) throws IOException, NumberFormatException, ClassCastException {
         List<Shape> fetchedState = new ArrayList<>();
         for (JsonValue jsonValue: jsonShapeArray) {
@@ -311,13 +393,24 @@ public class Model {
             } catch(Exception e) {continue;}   
         }
 
-        
         updateCurrentDrawingPanelState(fetchedState);
         notifier.firePropertyChange("drawnShapes", null, getShapes());
         notifyUndoRedoStates();
     }
 
 
+    /**
+     * Clones the current state of the drawing panel.
+     * 
+     * This is used when a user wants to draw a new shape on the screen,
+     * such that all previously drawn shapes are carried over.
+     * 
+     * This is also used when selecting a shape on the screen. In that case,
+     * the selection needs to happen at a cloned state otherwise the selection
+     * will not be drawn correctly.
+     *
+     * @return  A list of Shape objects representing the cloned state of the drawing panel.
+     */
     private List<Shape> cloneDrawingPanelState() {
         List<Shape> currentState = currentDrawingPanelState;
         List<Shape> clonedState = new ArrayList<Shape>();
@@ -334,6 +427,19 @@ public class Model {
         return clonedState;
     }
 
+    /**
+     * Creates a new drawing panel state.
+     *
+     * This function is responsible for creating a new state in the drawing panel.
+     * If the user has clicked undo and draws something new, this function will
+     * overwrite the old state. It first checks if there are any existing states
+     * after the current position and clears them. Then, it adds a clone of the
+     * current drawing panel state to the list of states. Finally, it updates
+     * the current drawing panel state.
+     *
+     * @param  None
+     * @return None
+     */
     private void createNewDrawningPanelState() {
         if (drawingPanelStates.size() > currentDrawingPanelStatePosition) { //if the user has clicked undo and draws smth new, this will overwrite the old state.
             drawingPanelStates.subList(currentDrawingPanelStatePosition+1, drawingPanelStates.size()).clear();
@@ -345,6 +451,13 @@ public class Model {
         updateCurrentDrawingPanelState();
     }
 
+    /**
+     * Removes all saved states of the drawing panel
+     * and clears the current state.
+     *
+     * @param  None
+     * @return None
+     */
     public void clearAllShapes() {
         //shapes.clear();
         getShapes().clear();
@@ -358,12 +471,27 @@ public class Model {
     }
 
 
+    /**
+     * Notifies the UI whether the undo and redo buttons should be enabled or disabled
+     * based on the current state of the drawing panel.
+     *
+     * @param  paramName  description of parameter
+     * @return            description of return value
+     */
     private void notifyUndoRedoStates() {
         notifier.firePropertyChange("undoBtnState", currentDrawingPanelStatePosition == 0, currentDrawingPanelStatePosition != 0);
         //notifier.firePropertyChange("redoBtnState", undoneShapes.isEmpty(), !undoneShapes.isEmpty());
         notifier.firePropertyChange("redoBtnState", (currentDrawingPanelStatePosition == drawingPanelStates.size() - 1), currentDrawingPanelStatePosition != drawingPanelStates.size() - 1);
     }
 
+    /**
+     * Moves the current state of the drawing panel from n to n-1
+     * and updates the current state of the drawing panel.
+     * This is used when the user undoes a shape or shapes.
+     *
+     * @param  None
+     * @return None
+     */
     public void undoLastShape() {
         if (!drawingPanelStates.isEmpty() && currentDrawingPanelStatePosition > 0) {
             currentDrawingPanelStatePosition -= 1;
@@ -374,6 +502,14 @@ public class Model {
         notifyUndoRedoStates();
     }
 
+    /**
+     * Moves the current state of the drawing panel from n-1 to n.
+     * and updates the current state of the drawing panel.
+     * This is used when the user redoes a shape or shapes.
+     *
+     * @param  None
+     * @return None
+     */
     public void redoShape() {
         //if (!undoneShapes.isEmpty()) {
         if (currentDrawingPanelStatePosition < drawingPanelStates.size() - 1) {
@@ -386,6 +522,16 @@ public class Model {
     }
 
 
+    /**
+     * Updates the last shape drawn in the current state with the given end point coordinates.
+     * This is used when the user hasn't finished drawing a shape and they are still dragging with the mouse.
+     * If the last shape is an instance of ShiftKeyModifiable, updates its SHIFT key state.
+     * Notifies the view of the updated drawn shapes.
+     *
+     * @param  x             the x-coordinate of the end point
+     * @param  y             the y-coordinate of the end point
+     * @param  SHIFTKeyDown  the SHIFT key state
+     */
     public void updateLastShape(int x, int y, boolean SHIFTKeyDown) {
         if (!getShapes().isEmpty()) {
             Shape lastShape = getShapes().get(getShapes().size() - 1);
@@ -402,9 +548,10 @@ public class Model {
 
 
     /**
-     * Finds a shape at the specified position.
-     *
-     * In case where there are two overlapping shapes, the one that was drawn last is selected.
+     * Finds a shape at the specified position by calling the contains() method of each shape.
+     * This is used when select mode is enabled.
+     * 
+     * All selection happens in a cloned UI state of the current drawing panel state.
      * @param  x  the x-coordinate of the position
      * @param  y  the y-coordinate of the position
      */
@@ -437,6 +584,12 @@ public class Model {
         this.isFillColorSelected = b;
     }
 
+    /**
+     * Moves the selected shape by the specified offset values.
+     *
+     * @param  xOffset  the amount to move the shape horizontally
+     * @param  yOffset  the amount to move the shape vertically
+     */
     public void moveSelectedShape(int xOffset, int yOffset) {
         if (selectedShape != null) {
             selectedShape.move(xOffset, yOffset);
@@ -445,6 +598,11 @@ public class Model {
         }
     }
 
+    /**
+     * Rotates the selected shape by the specified angle in degrees.
+     *
+     * @param  angle  the angle by which to rotate the shape
+     */
     public void rotateSelectedShape(int angle) {
         if (selectedShape != null) {
             selectedShape.setRotationAngle(angle);
@@ -454,6 +612,11 @@ public class Model {
         }
     }
 
+    /**
+     * Scales the selected shape by the specified factor.
+     *
+     * @param  factor  the scaling factor
+     */
     public void scaleSelectedShape(double factor) {
         if (selectedShape != null) {
             selectedShape.setScaleFactor(factor);
@@ -462,6 +625,11 @@ public class Model {
         }
     }
 
+    /**
+     * Sets the border color of the selected shape.
+     *
+     * @param  borderColor  the color to set as the border color
+     */
     public void setBorderColorSelectedShape(Color borderColor) {
         if (selectedShape != null) {
             selectedShape.setBorderColor(borderColor);
@@ -470,7 +638,12 @@ public class Model {
         }
     }
 
-        public void setFillColorSelectedShape(Color borderColor) {
+    /**
+     * Sets the fill color of a ColorFillable selected shape.
+     *
+     * @param  borderColor  the color to set as the fill color
+     */
+    public void setFillColorSelectedShape(Color borderColor) {
         if (selectedShape != null && selectedShape instanceof ColorFillable) {
             ((ColorFillable) selectedShape).setFillColor(borderColor);
             // Notify the view to redraw the shapes
@@ -478,6 +651,11 @@ public class Model {
         }
     }
 
+    /**
+     * Set the border width of the selected shape.
+     *
+     * @param  stroke  the border width to be applied to the selected shape
+     */
     public void strokeSelectedShape(BasicStroke stroke) {
         if (selectedShape != null) {
             selectedShape.setBorderWidth(stroke);
@@ -486,6 +664,15 @@ public class Model {
         }
     }
 
+    /**
+     * Draws a shape on the drawing panel based on the given coordinates and shape type.
+     *
+     * @param  startX       the x-coordinate of the starting point
+     * @param  startY       the y-coordinate of the starting point
+     * @param  endX         the x-coordinate of the ending point
+     * @param  endY         the y-coordinate of the ending point
+     * @param  SHIFTKeyDown indicates whether the SHIFT key is pressed or not (used for drawing squares and circles)
+     */
     public void drawShape(int startX, int startY, int endX, int endY, boolean SHIFTKeyDown) {
 
         createNewDrawningPanelState();
@@ -510,11 +697,17 @@ public class Model {
     }
 
 
+    /**
+     * Exports the canvas as an image file by calling the ImageExporter helper class.
+     *
+     * @param  selectedFilePath  the file path where the image will be saved
+     * @param  width             the desired width of the image
+     * @param  height            the desired height of the image
+     * @throws IOException       if there is an error writing the image file
+     * @throws IllegalArgumentException if the width or height is invalid
+     */
     public void exportCanvasAsImage(File selectedFilePath, int width, int height) 
     throws IOException, IllegalArgumentException {
-
-        System.out.println("width: "+width);
-        System.out.println("height: "+height);
         ImageExporter.exportShapesToImage(currentDrawingPanelState, selectedFilePath, width, height);
     }
 
