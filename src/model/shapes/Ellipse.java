@@ -49,13 +49,6 @@ public class Ellipse extends Shape implements ShiftKeyModifiable, ColorFillable 
 
         super.draw(g);
 
-        //get width and height of the bounding rectangle of the ellipse.
-        //int width = Math.abs(getEndX() - getStartX());
-        //int height = Math.abs(getEndY() - getStartY());
-
-        //find the coordinates of the top left corner of the bounding rectangle.
-        //int minX = Math.min(getStartX(), getEndX());
-        //int minY = Math.min(getStartY(), getEndY());
 
         Point topLeftPoint = getTopLeftPoint();
         int width = getWidth();
@@ -67,9 +60,6 @@ public class Ellipse extends Shape implements ShiftKeyModifiable, ColorFillable 
             int diameter = Math.max(width, height);
             // To calculate the top left corner of the new bounded square.
             //new top left corner is midpoind of rectangle minus half the diameter
-            //int centerX = getMinX() + getWidth()/2 - diameter/2;
-            //int centerY = getMinY() + getHeight()/2 - diameter/2;
-
             int centerX = topLeftPoint.x + width/2 - diameter/2;
             int centerY = topLeftPoint.y + height/2 - diameter/2;
 
@@ -79,7 +69,6 @@ public class Ellipse extends Shape implements ShiftKeyModifiable, ColorFillable 
             g.drawOval(centerX, centerY, diameter, diameter);     
         }
         else {
-            //g.drawOval(getMinX(), getMinY(), getWidth(), getHeight());
             g.setColor(fillColor);
             g.fillOval(topLeftPoint.x, topLeftPoint.y, width, height);
             g.setColor(borderColor);
@@ -96,16 +85,7 @@ public class Ellipse extends Shape implements ShiftKeyModifiable, ColorFillable 
     @Override
     protected Point2D getCentroid() {
         // Calculate the center point of the ellipse
-        //int centerX = getMinX() + getWidth() / 2;
-        //int centerY = getMinY() + getHeight() / 2;
-        //return new Point2D.Double(centerX, centerY);
-
-        
-
         double midpointX = (startPoint.x + getScaledEndPoint().x) / 2;
-        //Midpoint of the y axis
-        //double midpointY = (getMinScaledY() + getMaxScaledY()) /2;
-        //double midpointY = (getHeight()) /2 + getMinY();
         double midpointY = (startPoint.y + getScaledEndPoint().y) / 2;
         return new Point2D.Double(midpointX, midpointY);
     }

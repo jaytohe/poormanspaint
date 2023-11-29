@@ -24,29 +24,20 @@ public class Rectangle extends Shape implements ShiftKeyModifiable, ColorFillabl
     }
 
     /**
-     * Check if the passed in point is in the perimeter of the rectangle.
+     * Check if the passed in point is in the area of the rectangle.
      *
      * @param  x	the x coordinate
      * @param  y	the y coordinate
-     * @return  	true iff point is on top/bottom/left/right edges of the rectangle.
+     * @return  	true iff point is on top/bottom/left/right edges of the rectangle or inside it.
      */
     @Override
     public boolean contains(int x, int y) {
 
-        /*
-        int width = Math.abs(getEndX() - getStartX());
-        int height = Math.abs(getEndY() - getStartY());
-        int minX = Math.min(getStartX(), getEndX());
-        int minY = Math.min(getStartY(), getEndY());
-        */
-        //if (x >= minX && x <= minX + width && (y == minY || y == minY + height)) {
+
         if (x >= getMinX() && x <= getMinX() + getWidth() && (y >= getMinY() && y <= getMinY() + getHeight())) {
             return true;
-        } // check if point is on top or bottom edge of the rectangle.
+        } // check if point is in the area of the rectangle.
 
-        //if (y >= minY && y <= minY + height && (x == minX) || x == minX + width) {
-        //    return true;
-        //} // check if point is on the left or right edges of the rectangle.
 
         return false;
 
@@ -71,23 +62,15 @@ public class Rectangle extends Shape implements ShiftKeyModifiable, ColorFillabl
         //Midpoint of the x axis
         double midPointX = getTopLeftPoint().x + width / 2;
 
-        //Midpoint of theColor fillColor, y axis
+        //Midpoint of the y axis
         double midPointY = getTopLeftPoint().y + height / 2;
 
-        
-        //Midpoint of the y axis
         return new Point2D.Double(midPointX, midPointY);
     }
 
     public void draw(Graphics2D g) {
         super.draw(g);
         
-        /*     int width = Math.abs(getEndX() - getStartX());
-        int height = Math.abs(getEndY() - getStartY());
-        int minX = Math.min(getStartX(), getEndX());
-        int minY = Math.min(getStartY(), getEndY());
-        */
-        //Point scaledTopLeftPoint = getScaledTopLeftPoint();
         Point topLeftPoint = getTopLeftPoint();
         int width = (int) (getWidth());
         int height = (int) (getHeight());
@@ -117,19 +100,4 @@ public class Rectangle extends Shape implements ShiftKeyModifiable, ColorFillabl
     public void setFillColor(Color fillColor) {
         this.fillColor = fillColor;
     }
-
-    /* @Override
-    protected void scale() {
-        Point2D midpoint = getCentroid();
-
-        double xDiff = midpoint.getX() - getStartPoint().getX();
-        double yDiff = midpoint.getY() - getStartPoint().getY();
-
-        scaledStartPoint = new Point((int) (midpoint.getX() - xDiff * scaleFactor), (int) (midpoint.getY() - yDiff * scaleFactor));
-        
-        xDiff = midpoint.getX() - getEndPoint().getX();
-        yDiff = midpoint.getY() - getEndPoint().getY();
-
-        scaledEndPoint = new Point((int) (midpoint.getX() - xDiff * scaleFactor), (int) (midpoint.getY() - yDiff * scaleFactor));
-    }*/
 }

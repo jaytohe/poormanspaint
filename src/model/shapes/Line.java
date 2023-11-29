@@ -60,6 +60,11 @@ public class Line extends Shape {
 
 
 
+    /**
+     * Calculates and returns the rotated start point of a line.
+     *
+     * @return  the rotated start point as a Point object.
+     */
     protected Point getRotatedStartPoint() {
         // Calculate the midpoint of the line
         double midpointX = (startPoint.getX() + getScaledEndPoint().getX()) / 2;
@@ -78,6 +83,11 @@ public class Line extends Shape {
         return new Point((int) rotatedStartX, (int) rotatedStartY);
     }
 
+    /**
+     * Calculates the rotated end point of a line segment.
+     *
+     * @return  the rotated end point as a Point object
+     */
     protected Point getRotatedEndPoint() {
         // Calculate the midpoint of the line
         double midpointX = (startPoint.getX() + getScaledEndPoint().getX()) / 2;
@@ -97,6 +107,11 @@ public class Line extends Shape {
     
         return new Point((int) rotatedEndX, (int) rotatedEndY);
     }
+    /**
+     * Calculates and returns the midpoint of the line.
+     *
+     * @return  the midpoint as a Point2D object
+     */
     protected Point2D getCentroid() {
         //Midpoint of the x axis
         double midpointX = (startPoint.x + getScaledEndPoint().x) / 2;

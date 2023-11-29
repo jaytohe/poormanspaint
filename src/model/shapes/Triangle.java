@@ -24,8 +24,6 @@ public class Triangle extends Shape implements ColorFillable {
         int[] xPoints = {minX, minX + width, minX + width / 2};
         int[] yPoints = {minY + height, minY + height, minY};
 
-        //g.drawPolygon(xPoints, yPoints, 3);
-
         g.setColor(fillColor);
         g.fillPolygon(xPoints, yPoints, 3);
         g.setColor(borderColor);
@@ -35,6 +33,15 @@ public class Triangle extends Shape implements ColorFillable {
             g.setTransform(beforeRotation);
         }
     }
+    /**
+     * Checks if the given coordinates (x, y) are contained within the triangle formed by the start and end points of a shape.
+     *
+     * This is done by using the barycentric coordinates of the triangle.
+     * 
+     * @param  x	The x-coordinate of the point to check.
+     * @param  y	The y-coordinate of the point to check.
+     * @return  	Returns true if the point is within the triangle, otherwise returns false.
+     */
     @Override
     public boolean contains(int x, int y) {
 

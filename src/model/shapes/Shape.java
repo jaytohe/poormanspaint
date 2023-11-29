@@ -8,6 +8,9 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 
 
+/**
+ * Abstract class representing a shape.
+ */
 public abstract class Shape {
 
     protected Point startPoint;
@@ -37,33 +40,69 @@ public abstract class Shape {
     }
 
 
+    /**
+     * Returns the minimum X coordinate between the startPoint and endPoint.
+     *
+     * @return  the minimum X coordinate
+     */
     public int getMinX() {
         return (int) Math.min(startPoint.getX(), endPoint.getX());
     }
 
 
+    /**
+     * Gets the maximum value of the x-coordinate between the start and end points.
+     *
+     * @return the maximum x-coordinate value
+     */
     public int getMaxX() {
         return (int) Math.max(startPoint.getX(), endPoint.getX());
     }
 
 
+    /**
+     * Returns the minimum value of Y coordinate between the startPoint and endPoint.
+     *
+     * @return the minimum value of Y coordinate
+     */
     public int getMinY() {
         return (int) Math.min(startPoint.getY(), endPoint.getY());
     }
 
 
+    /**
+     * Returns the maximum value of the y-coordinate between the startPoint and endPoint.
+     *
+     * @return the maximum value of the y-coordinate
+     */
     public int getMaxY() {
         return (int) Math.max(startPoint.getY(), endPoint.getY());
     }
 
+    /**
+     * Returns the top left point of the shape.
+     *
+     * @return the top left point of the shape
+     */
     public Point getTopLeftPoint() {
         return new Point(getMinX(), getMinY());
     }
 
+    /**
+     * Calculates the scaled width between the startpoint and the endpoint.
+     *
+     * @return  the width between the startpoint and the endpoint multiplied by the scale factor
+     */
     public int getWidth() {
         return (int) (Math.abs(startPoint.getX() - endPoint.getX())*scaleFactor);
     }
 
+
+    /**
+     * Calculates the scaled height between the startpoint and the endpoint.
+     *
+     * @return  the height between the startpoint and the endpoint multiplied by the scale factor
+     */
     public int getHeight() {
         return (int) (Math.abs(startPoint.getY() - endPoint.getY())*scaleFactor);
     }
@@ -92,12 +131,22 @@ public abstract class Shape {
         this.borderWidth = stroke;
     }
 
+    /**
+     * Sets the rotation angle of the shape in radians.
+     *
+     * @param  angle  the rotation angle in degrees
+     */
     public void setRotationAngle(int angle) {
         if (0 <= angle && angle <= 360) {
             rotationAngle = Math.toRadians(angle);
         }
     }
 
+    /**
+     * Sets the scale factor for the shape.
+     *
+     * @param  factor    the scale factor to set. Must be between 0 and 4 (inclusive).
+     */
     public void setScaleFactor(double factor) {
         if (0 <= factor && factor <= 4) {
             scaleFactor = factor;
@@ -108,6 +157,12 @@ public abstract class Shape {
         return scaleFactor;
     }
     
+    /**
+     * Returns the endpoint of the shaped measured in terms of the scaled width
+     * i.e. the difference between endpoint and startpoint multiplied by the scale factor.
+     *
+     * @return  the scaled end point as a Point object
+     */
     public Point getScaledEndPoint() {
         double newEndPointX = ((endPoint.getX() - startPoint.getX())*scaleFactor) + startPoint.getX();
         double newEndPointY = ((endPoint.getY() - startPoint.getY())*scaleFactor) + startPoint.getY();
@@ -118,6 +173,13 @@ public abstract class Shape {
         return rotationAngle;
     }
 
+    /**
+     * Move the start and end points
+     * by offset defined by dx and dy
+     *
+     * @param  dx  offset in the x-direction
+     * @param  dy  offset in the y-direction
+     */
     public void move(int dx, int dy) {
         //Move the start and end points
         // by offset defined by dx and dy
