@@ -150,7 +150,12 @@ public class Model {
     }
 
     private void updateCurrentDrawingPanelState(List<Shape> state) {
-        drawingPanelStates.add(state);
+        if (currentDrawingPanelStatePosition+1 < drawingPanelStates.size()) {
+            drawingPanelStates.set(currentDrawingPanelStatePosition+1, state);
+        }
+        else {
+            drawingPanelStates.add(state);
+        }
         currentDrawingPanelStatePosition +=1;
         currentDrawingPanelState = drawingPanelStates.get(currentDrawingPanelStatePosition);
     }
