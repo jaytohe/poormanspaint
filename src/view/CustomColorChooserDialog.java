@@ -10,6 +10,14 @@ import javax.swing.JColorChooser;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 
+
+/**
+ * 
+ * A custom JColorChooser dialog which contains
+ * a checkbox up top for indicating whether the fill color should be set or not.
+ * 
+ * 
+ */
 public class CustomColorChooserDialog extends JColorChooser {
     private JCheckBox fillCheckBox;
     private JPanel checkboxPanel;
