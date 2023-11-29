@@ -7,6 +7,9 @@ import java.awt.Component;
 import java.awt.Frame;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.IOException;
+import java.net.Socket;
+import java.net.UnknownHostException;
 import java.nio.channels.NetworkChannel;
 
 import javax.swing.JCheckBox;
@@ -19,6 +22,7 @@ import javax.swing.JPanel;
 
 import model.Model;
 import model.ShapeType;
+import model.TCPDrawingClient;
 import view.CustomColorChooserDialog;
 import view.NetworkConnectDialog;
 
@@ -166,8 +170,29 @@ public class Controller {
         dialog.setConnectButtonListener(e -> {
             // Custom logic for the connect button listener
             String serverUrl = dialog.getServerUrl();
+            String portString = dialog.getPort();
             String token = dialog.getToken();
-            // Handle server connection logic here
+
+            try {
+
+                TCPDrawingClient client = new TCPDrawingClient(serverUrl, portString, token, model, parent);
+                //If we reach here, it means the connection was successful i.e. we found the server.
+
+            }
+            catch (UnknownHostException uhe) {
+                JOptionPane.showMessageDialog(parent, "Error: Could not find hostname " + serverUrl, "Connection Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            catch(NumberFormatException ne) {
+                JOptionPane.showMessageDialog(parent, "Error: Invalid Port Number", "Connection Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            catch(IOException ie) {
+                JOptionPane.showMessageDialog(parent, "Error: " + ie.getMessage(), "Connection Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
             dialog.dispose();
         });
 
@@ -176,7 +201,13 @@ public class Controller {
             dialog.dispose();
         });
 
+        dialog.pack();
+        dialog.setLocationRelativeTo(parent);
         dialog.setVisible(true);
+    }
+
+    public void fetchShapesFromServer() {
+        model.getTCPDrawingClient().fetchShapes();
     }
 
     /**

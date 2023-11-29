@@ -8,11 +8,13 @@ import java.beans.PropertyChangeListener;
 import java.util.List;
 
 import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.JToolBar;
@@ -140,13 +142,21 @@ public class View implements PropertyChangeListener {
         JMenuItem pushShapesItem = new JMenuItem("Push Shapes");
     
         // Disable fetchShapesItem and pushShapesItem by default
-        fetchShapesItem.setEnabled(false);
+        fetchShapesItem.setEnabled(true);
         pushShapesItem.setEnabled(false);
 
 
         //Add listeners to the menu items
         connectItem.addActionListener(e -> {
             controller.showNetworkConnectDialog(mainFrame);
+        });
+
+        fetchShapesItem.addActionListener(e -> {
+            JOptionPane optionPane = new JOptionPane("Fetching Shapes. Please wait...", JOptionPane.INFORMATION_MESSAGE);
+            JDialog dialog = optionPane.createDialog(mainFrame, "Message");
+            dialog.setModal(false); // Set the dialog to be non-blocking
+            dialog.setVisible(true);
+            controller.fetchShapesFromServer();
         });
     
         networkMenu.add(connectItem);

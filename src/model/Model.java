@@ -38,6 +38,8 @@ public class Model {
     private Color borderColor;
     private Color fillColor;
     private BasicStroke borderWidth;
+
+    private TCPDrawingClient client;
     
     public Model() {
         shapeType = ShapeType.LINE;
@@ -57,6 +59,14 @@ public class Model {
 
     public void addListener(PropertyChangeListener pe) {
         notifier.addPropertyChangeListener(pe);
+    }
+
+    public void setTCPDrawingClient(TCPDrawingClient client) {
+        this.client = client;
+    }
+
+    public TCPDrawingClient getTCPDrawingClient() {
+        return client;
     }
 
     private void updateSelectedShape() {
