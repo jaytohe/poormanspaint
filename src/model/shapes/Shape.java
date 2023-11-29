@@ -134,7 +134,7 @@ public abstract class Shape {
         beforeRotation = g.getTransform();
         Point2D centroid = getCentroid();
         g.rotate(rotationAngle, centroid.getX(), centroid.getY());
-        System.out.println("called g.rotate with rotationAngle: "+ rotationAngle);
+        //System.out.println("called g.rotate with rotationAngle: "+ rotationAngle);
     }
 
 

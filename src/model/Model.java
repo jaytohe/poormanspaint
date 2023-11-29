@@ -11,7 +11,10 @@ import java.beans.PropertyChangeSupport;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+
+import javax.json.*;
 
 import model.shapes.ColorFillable;
 import model.shapes.Ellipse;
@@ -40,6 +43,9 @@ public class Model {
     private BasicStroke borderWidth;
 
     private TCPDrawingClient client;
+
+
+    HashMap<String, Color> supportedColors = new HashMap<String, Color>();
     
     public Model() {
         shapeType = ShapeType.LINE;
@@ -55,6 +61,21 @@ public class Model {
        // shapes = new LinkedList<>();
        // undoneShapes = new LinkedList<>();
         this.notifier = new PropertyChangeSupport(this);
+        
+        //Supported Json colors.
+        supportedColors.put("red", Color.RED);
+        supportedColors.put("green", Color.GREEN);
+        supportedColors.put("blue", Color.BLUE);
+        supportedColors.put("yellow", Color.YELLOW);
+        supportedColors.put("black", Color.BLACK);
+        supportedColors.put("white", Color.WHITE);
+        supportedColors.put("cyan", Color.CYAN);
+        supportedColors.put("magenta", Color.MAGENTA);
+        supportedColors.put("orange", Color.ORANGE);
+        supportedColors.put("pink", Color.PINK);
+        supportedColors.put("gray", Color.GRAY);
+        supportedColors.put("darkGray", Color.DARK_GRAY);
+        supportedColors.put("lightGray", Color.LIGHT_GRAY);
     }
 
     public void addListener(PropertyChangeListener pe) {
@@ -118,6 +139,98 @@ public class Model {
         drawingPanelStates.add(state);
         currentDrawingPanelStatePosition +=1;
         currentDrawingPanelState = drawingPanelStates.get(currentDrawingPanelStatePosition);
+    }
+
+    public void createDrawingPanelStateFromJson(JsonArray jsonShapeArray) throws IOException, NumberFormatException, ClassCastException {
+
+
+        List<Shape> fetchedState = new ArrayList<>();
+        for (JsonValue jsonValue: jsonShapeArray) {
+
+            if (!(jsonValue instanceof JsonObject)) {
+                continue;
+            }
+
+            try {
+                JsonObject jsonShape = (JsonObject) jsonValue;
+                JsonString shapeType = jsonShape.getJsonString("type");
+                JsonNumber x = jsonShape.getJsonNumber("x");
+                JsonNumber y = jsonShape.getJsonNumber("y");
+                if (shapeType == null)
+                    throw new IOException("Invalid JSON drawing array. Could not find type.");
+                if (x == null)
+                    throw new IOException("Invalid JSON drawing array. Could not find x.");
+                if (y == null)
+                    throw new IOException("Invalid JSON drawing array. Could not find y.");
+                    
+                //Reaching here means shapeType, startX and startY exist.
+
+                int startX = x.intValue();
+                int startY = y.intValue();
+
+                //Get all properties regardless of shape
+
+                JsonObject jsonShapeProperties = jsonShape.getJsonObject("properties");
+
+                if (jsonShapeProperties == null)
+                    continue;
+
+                JsonNumber widthS = jsonShapeProperties.getJsonNumber("width");
+                JsonNumber heightS = jsonShapeProperties.getJsonNumber("height");
+                JsonNumber rotationS = jsonShapeProperties.getJsonNumber("rotation");
+                JsonString borderColorS = jsonShapeProperties.getJsonString("borderColor");
+                JsonNumber borderWidthS= jsonShapeProperties.getJsonNumber("borderWidth");
+                JsonString fillColorS = jsonShapeProperties.getJsonString("fillColor");
+                JsonNumber x2S = jsonShapeProperties.getJsonNumber("x2");
+                JsonNumber y2S = jsonShapeProperties.getJsonNumber("y2");
+                JsonString lineColorS = jsonShapeProperties.getJsonString("lineColor");
+                JsonNumber lineWidthS = jsonShapeProperties.getJsonNumber("lineWidth");
+
+                int endX;
+                int endY;
+                Color borderColor = supportedColors.getOrDefault((borderColorS == null) ? null : borderColorS.getString().toLowerCase(), getBorderColor());
+                BasicStroke borderWidth =(borderWidthS == null) ? new BasicStroke(1) : new BasicStroke(borderWidthS.intValue());
+                Color fillColor = supportedColors.getOrDefault((fillColorS == null) ? null : fillColorS.getString().toLowerCase(), getFillColor());
+                int rotation = (rotationS == null) ? 0 : rotationS.intValue();
+                switch(shapeType.getString()) {
+                    case "line": {
+                        endX = (x2S == null) ? 10 : x2S.intValue();
+                        // If you do not get a property value that you expect, you should use a default value. 
+                        endY = (y2S == null) ? 10: y2S.intValue();
+                        borderColor = supportedColors.getOrDefault((lineColorS == null) ? null : lineColorS.getString().toLowerCase(), getBorderColor());
+                        borderWidth = (lineWidthS == null) ? new BasicStroke(1) : new BasicStroke(lineWidthS.intValue());
+
+                        fetchedState.add(new Line(startX, startY, endX, endY, borderColor, borderWidth));
+                    }
+                    break;
+                    case "rectangle": {
+                        int width = (widthS == null) ? 20 : widthS.intValue();
+                        int height = (heightS == null) ? 10 : heightS.intValue();
+                        endX = startX + width;
+                        endY = startY + height;
+                        Rectangle rectangle = new Rectangle(startX, startY, endX, endY, borderColor, fillColor, borderWidth, width == height);
+                        rectangle.setRotationAngle(rotation);
+                        fetchedState.add(rectangle);
+                    }
+                    break;
+                    case "ellipse": {
+                        int width = (widthS == null) ? 20 : widthS.intValue();
+                        int height = (heightS == null) ? 10 : heightS.intValue();
+                        endX = startX + width;
+                        endY = startY + height;
+                        Ellipse ellipse = new Ellipse(startX, startY, endX, endY, borderColor, fillColor, borderWidth, width == height);
+                        ellipse.setRotationAngle(rotation);
+                        fetchedState.add(ellipse);
+                    }
+                    break;
+                }
+            } catch(Exception e) {continue;}   
+        }
+
+        
+        updateCurrentDrawingPanelState(fetchedState);
+        notifier.firePropertyChange("drawnShapes", null, getShapes());
+        notifyUndoRedoStates();
     }
 
 
@@ -311,6 +424,7 @@ public class Model {
         notifier.firePropertyChange("drawnShapes", null, currentDrawingPanelState);
         notifyUndoRedoStates();
     }
+
 
     public void exportCanvasAsImage(File selectedFilePath, int width, int height) 
     throws IOException, IllegalArgumentException {

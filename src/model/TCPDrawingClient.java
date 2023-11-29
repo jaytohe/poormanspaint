@@ -66,9 +66,7 @@ public class TCPDrawingClient {
             public void run() {
                 try {
                     PrintWriter out = new PrintWriter(socket.getOutputStream());
-                    JsonBuilderFactory builderFactory = Json.createBuilderFactory(null);
-                    JsonObjectBuilder b1 = builderFactory.createObjectBuilder();
-                    JsonObjectBuilder b2 = builderFactory.createObjectBuilder();
+                    JsonObjectBuilder b1 = Json.createObjectBuilder();
                     b1.add("action", "getDrawings");
 
                     out.println(b1.build().toString());
@@ -102,7 +100,7 @@ class TCPDrawingClientInputReader extends Thread {
             while ((line = in.readLine()) != null) {
 
                 //DEUG
-                System.out.println("Received: " + line);
+                //System.out.println("Received: " + line);
 
                 JsonReader reader = Json.createReader(new StringReader(line));
                 JsonStructure json = reader.read();
@@ -130,12 +128,11 @@ class TCPDrawingClientInputReader extends Thread {
                     }
                 }
                 else if (json instanceof JsonArray) {
-                    //JsonArray jsonResponse = (JsonArray) json;
+                    JsonArray jsonResponse = (JsonArray) json;
+                    model.createDrawingPanelStateFromJson(jsonResponse);
                 }
 
             }
-
-            System.out.println("line nulled");
         } 
         catch(IOException ie) {ie.printStackTrace();}
     }
