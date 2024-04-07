@@ -1,15 +1,12 @@
-## Note:
+# Poor Man's MSPaint v1.0
 
-For some reason after I compile with javac, the javax.json library cannot be found. This means that you'll get an exception if you try to test the Networking part: 
+This is a simple vector drawing application written in Java/Swing. It supports drawing lines, circles, ellipses, rectangles, squares and isosceles triangles in various colours as well as exporting drawing to jpg, among other features.
 
-> Exception in thread "Thread-1" java.lang.NoClassDefFoundError: javax/json/Json
->	at model.TCPDrawingClient$1.run(TCPDrawingClient.java:46)
->	at java.base/java.lang.Thread.run(Thread.java:833)
+I developed this for the third coursework of the CS5001 Object Oriented Programming and Modelling module at the University of St Andrews.
+I scored 18 out of 20 on it.
 
+For the complete coursework specifications, please refer to [CS5001_P3_Vector_Drawing.pdf](CS5001_P3_Vector_Drawing.pdf).
 
-You can look at the code present in model/TCPDrawingClient.java to see that I implemented some of the required functionality.
-
-My app works fine in VSCode with the Java Extension Manager though so you can try running it from there.
 
 
 ## How to compile and run
@@ -40,16 +37,6 @@ you can then run the app using:
 - The tests I've written are very basic and I admit that.
 
 - I used JUnit v4 and it works if you import the project into VSCode and use the Java Extension Manager.
-
-- I tried to figure out how to get it running from the command line to no avail.
-
-Note: The tests exist in ModelTest.java and the junit library in the lib/ directory. I googled and found that I need to run something like this: 
-
-`java -cp '.:lib/junit-4.13.2.jar' org.junit.runner.JUnitCore bin/ModelTest.class`
-
-But that does not work and I get "java.lang.IllegalArgumentException: Could not find class [bin/ModelTest.class]."
-
-
 
 ## General info
 

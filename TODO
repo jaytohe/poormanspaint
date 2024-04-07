@@ -1,3 +1,0 @@
-- Fix incorrect shape contains/mouse detection logic if a shape is rotated. This is currently working correctly only for lines.
-
-- Impl network json part.

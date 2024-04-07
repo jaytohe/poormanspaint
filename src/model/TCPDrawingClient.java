@@ -47,7 +47,7 @@ public class TCPDrawingClient {
                     JsonObjectBuilder b1 = builderFactory.createObjectBuilder();
                     JsonObjectBuilder b2 = builderFactory.createObjectBuilder();
                     b1.add("action", "login");
-                    b2.add("token", authToken); // token: "26e87036-877a-4e0d-90a3-17df98737ea3"
+                    b2.add("token", authToken);
                     b1.add("data", b2);
 
                     out.println(b1.build().toString());

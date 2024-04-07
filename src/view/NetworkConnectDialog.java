@@ -34,19 +34,19 @@ public class NetworkConnectDialog extends JDialog {
 
         // Server URL input field
         JLabel serverUrlLabel = new JLabel("Server Hostname:");
-        serverUrlField = new JTextField("cs5001-p3.dynv6.net");
+        serverUrlField = new JTextField();
         dialogPanel.add(serverUrlLabel);
         dialogPanel.add(serverUrlField);
 
         // Port number input field
         JLabel portLabel = new JLabel("Port number:");
-        portField = new JTextField("8080");
+        portField = new JTextField();
         dialogPanel.add(portLabel);
         dialogPanel.add(portField);
 
         // Token input field
         JLabel tokenLabel = new JLabel("Auth Token:");
-        tokenField = new JTextField("26e87036-877a-4e0d-90a3-17df98737ea3");
+        tokenField = new JTextField();
         dialogPanel.add(tokenLabel);
         dialogPanel.add(tokenField);
 
