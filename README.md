@@ -1,5 +1,7 @@
 # Poor Man's MSPaint v1.0
 
+![](showcase.png)
+
 This is a simple vector drawing application written in Java/Swing. It supports drawing lines, circles, ellipses, rectangles, squares and isosceles triangles in various colours as well as exporting drawing to jpg, among other features.
 
 I developed this for the third coursework of the CS5001 Object Oriented Programming and Modelling module at the University of St Andrews.
